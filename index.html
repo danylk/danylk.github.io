@@ -8,17 +8,16 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,300..700;1,7..72,300..700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..700;1,300..700&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="page">
 
     <header class="hero">
-      <img class="portrait" src="profile-web.jpg" width="640" height="800" alt="Sunkwan Kim in a graduation gown, outside a stone building">
-
+      <h1 class="name">Sunkwan Kim</h1>
+      <img class="portrait" src="profile-square.jpg" width="800" height="800" alt="Sunkwan Kim in a graduation gown, outside a stone building">
       <div class="hero-text">
-        <h1 class="name">Sunkwan Kim</h1>
         <p class="statement">I’m drawn to computer science theory and cryptography.</p>
         <nav class="links" aria-label="Elsewhere">
           <a href="https://github.com/danylk">GitHub</a>
@@ -30,79 +29,100 @@
 
     <section class="block" aria-labelledby="about">
       <h2 id="about">About</h2>
-      <div class="body">
-        <p>I'm finishing a bachelor's degree in Computer Science at Northeastern University, with a concentration in Foundations and a minor in Economics, and expect to graduate in December 2026. I enjoy theory in general and cryptography broadly: how schemes are defined, what it takes to prove them secure, and how the pieces build on one another.</p>
-        <p>Outside of cryptography, I’m interested in music, philosophy, and religion.</p>
+      <div class="rows">
+        <div class="prose">
+          <p>I'm finishing a bachelor's degree in Computer Science at Northeastern University, with a concentration in Foundations and a minor in Economics, and expect to graduate in December 2026. I enjoy theory in general and cryptography broadly: how schemes are defined, what it takes to prove them secure, and how the pieces build on one another.</p>
+          <p>Outside of cryptography, I’m interested in music, philosophy, and religion.</p>
+        </div>
       </div>
     </section>
 
     <section class="block" aria-labelledby="projects">
       <h2 id="projects">Projects</h2>
-      <div class="body">
-        <article class="entry">
-          <h3>A Survey of Zero-Knowledge Succinct Non‑interactive Arguments of Knowledge</h3>
-          <p class="meta">Survey paper, in progress, 2026</p>
-          <p>Traces modern zk-SNARKs from their definitions through their common anatomy (arithmetization, polynomial interactive oracle proofs, and polynomial commitments) to the main construction families, recursion and folding, and a side-by-side comparison of proof size, prover cost, and setup assumptions. <a href="https://github.com/danylk/zk-snark-survey/blob/main/zk-snark-survey.pdf">PDF</a></p>
+      <div class="rows">
+        <article class="row">
+          <p class="year">2026</p>
+          <div class="item">
+            <h3>A Survey of Zero-Knowledge Succinct Non‑interactive Arguments of Knowledge</h3>
+            <p class="meta">Survey paper, in progress</p>
+            <p>Traces modern zk-SNARKs from their definitions through their common anatomy (arithmetization, polynomial interactive oracle proofs, and polynomial commitments) to the main construction families, recursion and folding, and a side-by-side comparison of proof size, prover cost, and setup assumptions. <a href="https://github.com/danylk/zk-snark-survey/blob/main/zk-snark-survey.pdf">PDF</a></p>
+          </div>
         </article>
-
-        <article class="entry">
-          <h3>CryptPP</h3>
-          <p class="meta">Software, in progress, 2026</p>
-          <p>Models cryptographic schemes with <a href="https://docs.racket-lang.org/roulette/index.html">Roulette</a>, a probabilistic programming language for Racket. It is meant as a pedagogical tool: a way to build intuition for compound adversary advantage, and to see how the schemes relate to one another and how they are all interlinked. <a href="https://github.com/danylk/CryptPP">Code</a></p>
+        <article class="row">
+          <p class="year">2026</p>
+          <div class="item">
+            <h3>CryptPP</h3>
+            <p class="meta">Software, in progress</p>
+            <p>Models cryptographic schemes with <a href="https://docs.racket-lang.org/roulette/index.html">Roulette</a>, a probabilistic programming language for Racket. It is meant as a pedagogical tool: a way to build intuition for compound adversary advantage, and to see how the schemes relate to one another and how they are all interlinked. <a href="https://github.com/danylk/CryptPP">Code</a></p>
+          </div>
         </article>
-
-        <article class="entry">
-          <h3>Vertical search engine</h3>
-          <p class="meta">Software, 2024</p>
-          <p>A topic-focused search engine for social justice and civil rights. It consists of a polite, multithreaded crawler in Python that collected about 10,000 pages, a team-merged Elasticsearch index, PageRank and HITS over the crawled link graph, a Flask interface for relevance assessment, and a from-scratch reimplementation of trec_eval. <a href="https://github.com/danylk/Vertical-Search-Engine">Code</a></p>
+        <article class="row">
+          <p class="year">2024</p>
+          <div class="item">
+            <h3>Vertical search engine</h3>
+            <p class="meta">Software</p>
+            <p>A topic-focused search engine for social justice and civil rights. It consists of a polite, multithreaded crawler in Python that collected about 10,000 pages, a team-merged Elasticsearch index, PageRank and HITS over the crawled link graph, a Flask interface for relevance assessment, and a from-scratch reimplementation of trec_eval. <a href="https://github.com/danylk/Vertical-Search-Engine">Code</a></p>
+          </div>
         </article>
-
-        <article class="entry">
-          <h3>Health indicator classifier</h3>
-          <p class="meta">Software, 2024</p>
-          <p>Predicts smoking and drinking status from nearly a million health-screening records, comparing logistic regression, decision trees, naive Bayes, and a neural network. The work also tunes tree depth, compares models by age group, and picks the network’s decision thresholds from ROC curves. <a href="https://github.com/danylk/Health-Indicator-Classifier">Code</a></p>
+        <article class="row">
+          <p class="year">2024</p>
+          <div class="item">
+            <h3>Health indicator classifier</h3>
+            <p class="meta">Software</p>
+            <p>Predicts smoking and drinking status from nearly a million health-screening records, comparing logistic regression, decision trees, naive Bayes, and a neural network. The work also tunes tree depth, compares models by age group, and picks the network’s decision thresholds from ROC curves. <a href="https://github.com/danylk/Health-Indicator-Classifier">Code</a></p>
+          </div>
         </article>
       </div>
     </section>
 
     <section class="block" aria-labelledby="teaching">
       <h2 id="teaching">Teaching</h2>
-      <div class="body">
-        <article class="entry">
-          <h3>C++</h3>
-          <p class="meta">Teaching assistant, Northeastern University, July–August 2026</p>
-          <p>Guided students through memory management, pointers, and object-oriented design, and led grading and code review of the weekly assignments.</p>
+      <div class="rows">
+        <article class="row">
+          <p class="year">2026</p>
+          <div class="item">
+            <h3>C++</h3>
+            <p class="meta">Teaching assistant, Northeastern University, July–August 2026</p>
+            <p>Guided students through memory management, pointers, and object-oriented design, and led grading and code review of the weekly assignments.</p>
+          </div>
         </article>
-
-        <article class="entry">
-          <h3>Theory of Computation</h3>
-          <p class="meta">Teaching assistant, Northeastern University, May–June 2024, January–April 2026, and May–June 2026</p>
-          <p>Graded proofs, reductions, and formal language models with feedback on rigor, and held weekly office hours for 50+ students on Turing machines, NP-completeness, and computability.</p>
+        <article class="row">
+          <p class="year">2024–26</p>
+          <div class="item">
+            <h3>Theory of Computation</h3>
+            <p class="meta">Teaching assistant, Northeastern University, May–June 2024, January–April 2026, and May–June 2026</p>
+            <p>Graded proofs, reductions, and formal language models with feedback on rigor, and held weekly office hours for 50+ students on Turing machines, NP-completeness, and computability.</p>
+          </div>
         </article>
-
-        <article class="entry">
-          <h3>Fundamentals of Computer Science 1</h3>
-          <p class="meta">Teaching assistant, Northeastern University, September–December 2023</p>
-          <p>Led two weekly lab sections in a course of 600+ students, teaching functional programming, recursion, and structural induction in Racket, and held 12+ hours of office hours a week.</p>
+        <article class="row">
+          <p class="year">2023</p>
+          <div class="item">
+            <h3>Fundamentals of Computer Science 1</h3>
+            <p class="meta">Teaching assistant, Northeastern University, September–December 2023</p>
+            <p>Led two weekly lab sections in a course of 600+ students, teaching functional programming, recursion, and structural induction in Racket, and held 12+ hours of office hours a week.</p>
+          </div>
         </article>
       </div>
     </section>
 
     <section class="block" aria-labelledby="service">
       <h2 id="service">Service</h2>
-      <div class="body">
-        <article class="entry">
-          <h3>Signaler, Reconnaissance Battalion</h3>
-          <p class="meta">Republic of Korea Army, Cheorwon, July 2024–December 2025</p>
-          <p>Maintained secure radio equipment, antenna arrays, and encrypted tactical data links; administered the unit’s internal network, VoIP, and endpoint systems; and wrote automation scripts and small ML tools for network monitoring and reporting.</p>
+      <div class="rows">
+        <article class="row">
+          <p class="year">2024–25</p>
+          <div class="item">
+            <h3>Signaler, Reconnaissance Battalion</h3>
+            <p class="meta">Republic of Korea Army, Cheorwon, July 2024–December 2025</p>
+            <p>Maintained secure radio equipment, antenna arrays, and encrypted tactical data links; administered the unit’s internal network, VoIP, and endpoint systems; and wrote automation scripts and small ML tools for network monitoring and reporting.</p>
+          </div>
         </article>
       </div>
     </section>
 
     <section class="block" aria-labelledby="contact">
       <h2 id="contact">Contact</h2>
-      <div class="body">
-        <p>Write to <a href="mailto:kim.sunk@northeastern.edu">kim.sunk@northeastern.edu</a>, or find my code on <a href="https://github.com/danylk">GitHub</a>.</p>
+      <div class="rows">
+        <p class="prose">Write to <a href="mailto:kim.sunk@northeastern.edu">kim.sunk@northeastern.edu</a>, or find my code on <a href="https://github.com/danylk">GitHub</a>.</p>
       </div>
     </section>
 
