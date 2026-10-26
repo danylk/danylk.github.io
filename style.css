@@ -1,0 +1,215 @@
+/* Tokens ------------------------------------------------------------ */
+/* Palette taken from the portrait: pale limestone, gown black,
+   slate window glass, and the violet of the honour cords. */
+
+:root {
+  --paper:  #EDEEEC;
+  --ink:    #1E1F24;
+  --muted:  #565D68;
+  --rule:   #CDD0D2;
+  --accent: #4936A6;
+
+  --serif: "Literata", "Iowan Old Style", Georgia, serif;
+
+  --measure: 36rem;
+  --margin-col: 13rem;
+  --col-gap: 2.75rem;
+  --gutter: 16px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:  #17181C;
+    --ink:    #E6E6E4;
+    --muted:  #9CA2AC;
+    --rule:   #30333A;
+    --accent: #A595F0;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper:  #17181C;
+  --ink:    #E6E6E4;
+  --muted:  #9CA2AC;
+  --rule:   #30333A;
+  --accent: #A595F0;
+  color-scheme: dark;
+}
+
+/* Base -------------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  font-optical-sizing: auto;
+  line-height: 1.65;
+  font-kerning: normal;
+  font-variant-numeric: oldstyle-nums proportional-nums;
+  hanging-punctuation: first;
+}
+
+h1, h2, h3, p { margin: 0; }
+
+img { display: block; max-width: 100%; height: auto; }
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+a:hover { text-decoration-thickness: 2px; }
+
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Page frame -------------------------------------------------------- */
+
+.page {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 2.5rem var(--gutter) 3rem;
+}
+
+/* Hero -------------------------------------------------------------- */
+
+.hero {
+  display: grid;
+  gap: 1.75rem;
+  padding-bottom: 3rem;
+  margin-bottom: 3rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.portrait {
+  width: 10rem;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  background: var(--rule);
+}
+
+.name {
+  font-size: clamp(2.75rem, 9vw, 4.75rem);
+  font-weight: 340;
+  font-variation-settings: "opsz" 72;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+.statement {
+  margin-top: 1.25rem;
+  max-width: 30rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin-top: 1.75rem;
+}
+
+/* The page's one moment of motion: the photo develops like a print */
+
+@media (prefers-reduced-motion: no-preference) {
+  .portrait { animation: develop 1.4s ease-out both; }
+}
+
+@keyframes develop {
+  from { opacity: 0; filter: grayscale(1) contrast(0.85); }
+  50%  { opacity: 1; filter: grayscale(1) contrast(0.85); }
+  to   { opacity: 1; filter: none; }
+}
+
+/* Sections ---------------------------------------------------------- */
+
+.block {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+}
+
+.block h2 {
+  font-size: 1.125rem;
+  font-style: italic;
+  font-weight: 450;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.body {
+  max-width: var(--measure);
+}
+
+.body > p + p { margin-top: 1rem; }
+
+.entry + .entry {
+  margin-top: 2.25rem;
+}
+
+.entry h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+.entry .meta {
+  margin: 0.15rem 0 0.6rem;
+  font-size: 0.9375rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+/* Footer ------------------------------------------------------------ */
+
+.foot {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+/* Wide screens: the portrait and section names share a margin column */
+
+@media (min-width: 52rem) {
+  .page {
+    padding: 5.5rem 2.5rem 4rem;
+  }
+
+  .hero,
+  .block {
+    grid-template-columns: var(--margin-col) 1fr;
+    column-gap: var(--col-gap);
+  }
+
+  .hero {
+    align-items: end;
+    padding-bottom: 3.5rem;
+  }
+
+  .portrait { width: 100%; }
+
+  .block h2 { text-align: right; }
+
+  .foot {
+    margin-left: calc(var(--margin-col) + var(--col-gap));
+  }
+}
