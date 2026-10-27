@@ -142,6 +142,58 @@ a:focus-visible {
 
 .row + .row { margin-top: 1.75rem; }
 
+/* Courses are names only, so their rows sit close together */
+.row.course + .row.course { margin-top: 0.6rem; }
+
+.course .item h3 { font-weight: 500; }
+
+.course .item .meta { margin-bottom: 0; }
+
+/* Relevant Coursework folds: the heading button swaps the one-line
+   list of names for the full rows. Each name glides into its row
+   (script in index.html); the chevron turns to point down when open. */
+/* Inline, so the chevron follows the last word when the label wraps */
+.fold {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.fold:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.chevron {
+  width: 0.9em;
+  height: 0.9em;
+  margin-left: 0.3em;
+  vertical-align: -0.1em;
+  color: var(--muted);
+}
+
+.fold:hover .chevron { color: var(--accent); }
+
+.fold[aria-expanded="true"] .chevron { transform: rotate(90deg); }
+
+.course-names { max-width: 38rem; }
+
+/* Inline-block so each name can be moved with a transform */
+.cn { display: inline-block; }
+
+/* Courses outside the theory and cryptography core are set quieter */
+.cn.dim { color: var(--muted); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .chevron { transition: transform 0.3s ease, color 0.15s ease; }
+}
+
+
 .year {
   color: var(--muted);
   font-weight: 500;
@@ -198,7 +250,8 @@ a:focus-visible {
   }
 
   /* About and Contact have no year; align them with the entry text */
-  .rows > .prose { margin-left: calc(var(--year-col) + var(--gap)); }
+  .rows > .prose,
+  .course-names { margin-left: calc(var(--year-col) + var(--gap)); }
 
   .foot { margin-left: calc(var(--label-col) + var(--gap) + var(--year-col) + var(--gap)); }
 }

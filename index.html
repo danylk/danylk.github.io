@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Sunkwan Kim</title>
   <meta name="description" content="Sunkwan Kim: cryptography, zero-knowledge proofs, and research projects.">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="favicon.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..700;1,300..700&display=swap">
@@ -33,6 +35,92 @@
         <div class="prose">
           <p>I'm finishing a bachelor's degree in Computer Science at Northeastern University, with a concentration in Foundations and a minor in Economics, and expect to graduate in December 2026. I enjoy theory in general and cryptography broadly: how schemes are defined, what it takes to prove them secure, and how the pieces build on one another.</p>
           <p>Outside of cryptography, I’m interested in music, philosophy, and religion.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="coursework">
+      <h2 id="coursework">
+        <button class="fold" type="button" aria-expanded="false" aria-controls="course-rows">Relevant Coursework<svg class="chevron" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </h2>
+      <div class="rows courses" id="courses">
+        <p class="course-names"><span class="cn">Advanced Algorithms<span class="sep">,</span></span> <span class="cn">Programming with Probabilities<span class="sep">,</span></span> <span class="cn">Cryptography I (Stanford Online)<span class="sep">,</span></span> <span class="cn">Logic and Computation<span class="sep">,</span></span> <span class="cn">Introduction to CS Research<span class="sep">,</span></span> <span class="cn dim">Principles of AI<span class="sep">,</span></span> <span class="cn">Cryptography<span class="sep">,</span></span> <span class="cn dim">Information Retrieval<span class="sep">,</span></span> <span class="cn dim">Machine Learning and Data Mining 1<span class="sep">,</span></span> <span class="cn">Theory of Computation<span class="sep">,</span></span> <span class="cn">Algorithms and Data<span class="sep">,</span></span> <span class="cn dim">Foundations of Cybersecurity</span></p>
+        <div class="course-rows" id="course-rows" hidden>
+          <div class="row course">
+            <p class="year">2026</p>
+            <div class="item">
+              <h3>Advanced Algorithms</h3>
+              <p class="meta">In progress</p>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2026</p>
+            <div class="item">
+              <h3>Programming with Probabilities</h3>
+              <p class="meta">In progress</p>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2026</p>
+            <div class="item">
+              <h3>Cryptography I</h3>
+              <p class="meta">Stanford Online, through Coursera</p>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2026</p>
+            <div class="item">
+              <h3>Logic and Computation</h3>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2026</p>
+            <div class="item">
+              <h3>Introduction to CS Research</h3>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2026</p>
+            <div class="item">
+              <h3>Principles of AI</h3>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2024</p>
+            <div class="item">
+              <h3>Cryptography</h3>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2024</p>
+            <div class="item">
+              <h3>Information Retrieval</h3>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2024</p>
+            <div class="item">
+              <h3>Machine Learning and Data Mining 1</h3>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2023</p>
+            <div class="item">
+              <h3>Theory of Computation</h3>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2023</p>
+            <div class="item">
+              <h3>Algorithms and Data</h3>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2023</p>
+            <div class="item">
+              <h3>Foundations of Cybersecurity</h3>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -131,5 +219,73 @@
     </footer>
 
   </main>
+  <script>
+    // Relevant Coursework: the heading button swaps the one-line list of
+    // names for the full rows, and each name glides into its own row.
+    (function () {
+      var button = document.querySelector('.fold');
+      var box = document.getElementById('courses');
+      var list = box.querySelector('.course-names');
+      var rows = document.getElementById('course-rows');
+      var names = Array.prototype.slice.call(list.querySelectorAll('.cn'));
+      var titles = Array.prototype.slice.call(rows.querySelectorAll('h3'));
+      var extras = Array.prototype.slice.call(rows.querySelectorAll('.year, .meta'));
+      var seps = Array.prototype.slice.call(list.querySelectorAll('.sep'));
+      var ease = 'cubic-bezier(0.2, 0.7, 0.2, 1)';
+      var duration = 480;
+
+      function rects(nodes) {
+        return nodes.map(function (n) { return n.getBoundingClientRect(); });
+      }
+
+      // Move each node from its old position (and colour) to its new one
+      function glide(nodes, from, colours) {
+        nodes.forEach(function (node, i) {
+          var to = node.getBoundingClientRect();
+          var dx = from[i].left - to.left;
+          var dy = from[i].top - to.top;
+          node.animate([
+            { transform: 'translate(' + dx + 'px, ' + dy + 'px)', color: colours[i][0] },
+            { transform: 'none', color: colours[i][1] }
+          ], { duration: duration, easing: ease });
+        });
+      }
+
+      function resize(before) {
+        var after = box.offsetHeight;
+        box.style.overflow = 'hidden';
+        box.animate([{ height: before + 'px' }, { height: after + 'px' }],
+                    { duration: duration, easing: ease })
+           .onfinish = function () { box.style.overflow = ''; };
+      }
+
+      button.addEventListener('click', function () {
+        var opening = button.getAttribute('aria-expanded') !== 'true';
+        var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var before = box.offsetHeight;
+        var visible = opening ? names : titles;
+        var from = rects(visible);
+        var fromColours = visible.map(function (n) { return getComputedStyle(n).color; });
+
+        button.setAttribute('aria-expanded', String(opening));
+        list.hidden = opening;
+        rows.hidden = !opening;
+        if (still) return;
+
+        var target = opening ? titles : names;
+        var colours = target.map(function (n, i) {
+          return [fromColours[i], getComputedStyle(n).color];
+        });
+
+        resize(before);
+        glide(target, from, colours);
+        var settle = opening ? extras : seps;
+        settle.forEach(function (node) {
+          node.animate([{ opacity: 0 }, { opacity: 1 }],
+                       { duration: 300, delay: duration * 0.55, easing: 'ease-out', fill: 'backwards' });
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
