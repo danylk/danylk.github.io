@@ -44,7 +44,7 @@
         <button class="fold" type="button" aria-expanded="false" aria-controls="course-rows">Relevant Coursework<svg class="chevron" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </h2>
       <div class="rows courses" id="courses">
-        <p class="course-names"><span class="cn">Advanced Algorithms<span class="sep">,</span></span> <span class="cn">Programming with Probabilities<span class="sep">,</span></span> <span class="cn">Cryptography I (Stanford Online)<span class="sep">,</span></span> <span class="cn">Logic and Computation<span class="sep">,</span></span> <span class="cn">Introduction to CS Research<span class="sep">,</span></span> <span class="cn dim">Principles of AI<span class="sep">,</span></span> <span class="cn">Cryptography<span class="sep">,</span></span> <span class="cn dim">Information Retrieval<span class="sep">,</span></span> <span class="cn dim">Machine Learning and Data Mining 1<span class="sep">,</span></span> <span class="cn">Theory of Computation<span class="sep">,</span></span> <span class="cn">Algorithms and Data<span class="sep">,</span></span> <span class="cn dim">Foundations of Cybersecurity</span></p>
+        <p class="course-names"><span class="cn">Advanced Algorithms<span class="sep">,</span></span> <span class="cn">Programming with Probabilities<span class="sep">,</span></span> <span class="cn">Cryptography I (Stanford Online)<span class="sep">,</span></span> <span class="cn">Logic and Computation<span class="sep">,</span></span> <span class="cn">Introduction to CS Research<span class="sep">,</span></span> <span class="cn dim">Principles of AI<span class="sep">,</span></span> <span class="cn">Cryptography<span class="sep">,</span></span> <span class="cn dim">Information Retrieval<span class="sep">,</span></span> <span class="cn dim">Machine Learning and Data Mining 1<span class="sep">,</span></span> <span class="cn">Theory of Computation<span class="sep">,</span></span> <span class="cn dim">Computer Systems<span class="sep">,</span></span> <span class="cn">Algorithms and Data<span class="sep">,</span></span> <span class="cn">Mathematics of Data Models<span class="sep">,</span></span> <span class="cn dim">Foundations of Cybersecurity</span></p>
         <div class="course-rows" id="course-rows" hidden>
           <div class="row course">
             <p class="year">2026</p>
@@ -112,7 +112,19 @@
           <div class="row course">
             <p class="year">2023</p>
             <div class="item">
+              <h3>Computer Systems</h3>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2023</p>
+            <div class="item">
               <h3>Algorithms and Data</h3>
+            </div>
+          </div>
+          <div class="row course">
+            <p class="year">2023</p>
+            <div class="item">
+              <h3>Mathematics of Data Models</h3>
             </div>
           </div>
           <div class="row course">
@@ -133,7 +145,7 @@
           <div class="item">
             <h3>A Survey of Zero-Knowledge Succinct Non‑interactive Arguments of Knowledge</h3>
             <p class="meta">Survey paper, in progress</p>
-            <p>Traces modern zk-SNARKs from their definitions through their common anatomy (arithmetization, polynomial interactive oracle proofs, and polynomial commitments) to the main construction families, recursion and folding, and a side-by-side comparison of proof size, prover cost, and setup assumptions. <a href="https://github.com/danylk/zk-snark-survey/blob/main/zk-snark-survey.pdf">PDF</a></p>
+            <p>Traces modern zk-SNARKs from their definitions through their common anatomy (arithmetization, polynomial interactive oracle proofs, and polynomial commitments) to the main construction families, recursion and folding, and a side-by-side comparison of proof size, prover cost, and setup assumptions. It closes with open problems, such as lattice-based zk-SNARKs and succinct arguments for NP from LWE. <a href="https://github.com/danylk/zk-snark-survey/blob/main/zk-snark-survey.pdf">PDF</a></p>
           </div>
         </article>
         <article class="row">
@@ -141,7 +153,15 @@
           <div class="item">
             <h3>CryptPP</h3>
             <p class="meta">Software, in progress</p>
-            <p>Models cryptographic schemes with <a href="https://docs.racket-lang.org/roulette/index.html">Roulette</a>, a probabilistic programming language for Racket. It is meant as a pedagogical tool: a way to build intuition for compound adversary advantage, and to see how the schemes relate to one another and how they are all interlinked. <a href="https://github.com/danylk/CryptPP">Code</a></p>
+            <p>Models cryptographic schemes and protocols with <a href="https://docs.racket-lang.org/roulette/index.html">Roulette</a>, a probabilistic programming language for Racket, computing exact adversary advantages and soundness errors. Current implementations include IND-CPA games, the sum-check protocol, and Reed–Solomon fingerprinting, with more schemes and protocols to come. It is also meant as a pedagogical tool: a way to build intuition for compound adversary advantage, and to see how the schemes relate to one another. <a href="https://github.com/danylk/CryptPP">Code</a></p>
+          </div>
+        </article>
+        <article class="row">
+          <p class="year">2026</p>
+          <div class="item">
+            <h3>Reproduced: Continuous-Time Reward Machines</h3>
+            <p class="meta">Software, Artificial Intelligence research pathway</p>
+            <p>A re-implementation of Falah, Guha, and Trivedi’s <a href="https://doi.org/10.24963/ijcai.2025/563">Continuous-Time Reward Machines</a> (IJCAI 2025): value iteration on the product MDP, baseline Q-learning for continuous-time MDPs, counterfactual-experience learning with exact and sampled rates, and CTRM reward shaping, evaluated on an autonomous-vehicle delivery gridworld. Counterfactual learning reaches the optimal policy within 200 episodes, while the baseline does not learn the task. <a href="https://github.com/danylk/Reproduced-Continuous-Time-Reward-Machines">Code</a> <a href="https://github.com/danylk/Reproduced-Continuous-Time-Reward-Machines/blob/main/docs/presentation.pdf">Slides</a></p>
           </div>
         </article>
         <article class="row">
