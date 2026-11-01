@@ -100,6 +100,7 @@
 .book {
   --board: 0.14rem;     /* board / spine thickness (see .top-face) */
   --recess: 0.24rem;    /* how far the pages sit below the boards */
+  --overhang: 0.16rem;  /* how far the boards reach past the pages at the fore-edge */
   position: absolute;
   left: 50%;
   bottom: var(--plank);
@@ -129,7 +130,8 @@
   gap: 0.6rem;
   padding: 0.95rem 0.3rem 0.8rem;
   overflow: hidden;
-  border-radius: 2px 2px 1px 1px;
+  /* Square at the top, where it meets the board edges of the top face */
+  border-radius: 0 0 1px 1px;
   background: var(--cloth);
   color: var(--ink-on);
   writing-mode: vertical-rl;
@@ -184,8 +186,8 @@
 
 /* Top of the book, built like a hardcover: the cover boards and spine
    (::after, a cloth frame open at the fore-edge) stand at full height,
-   and the page block (::before) sits lower between them, running out
-   to the open fore-edge. In this face's own coordinates the
+   and the page block (::before) sits lower between them, ending just
+   short of the boards at the open fore-edge. In this face's own coordinates the
    bottom edge is the spine, the top edge the fore-edge, and +Z points up
    out of the book. The recess is deeper than a real book's ~3 mm so it
    reads at this scale. */
@@ -206,7 +208,7 @@
   left: var(--board);
   right: var(--board);
   bottom: var(--board);
-  top: 0;   /* the fore-edge side is open: pages run to the end */
+  top: var(--overhang);   /* open fore-edge: the boards reach a little past the pages */
   background: repeating-linear-gradient(90deg, #f1e9d6 0 1px, #d8cbb0 1px 2px);
   /* Shade the pages where they meet the boards and the spine */
   box-shadow:
@@ -219,8 +221,6 @@
   inset: 0;
   border: var(--board) solid var(--cloth);
   border-top: 0;
-  /* A touch lighter than the cloth, like a board's worn top edge */
-  box-shadow: inset 0 0 0 var(--board) rgba(255, 255, 255, 0.12);
   border-radius: 1px;
 }
 
@@ -247,7 +247,7 @@
   position: absolute;
   inset: var(--recess) 0 0;
   background: repeating-linear-gradient(90deg, #e9dfc8 0 1px, #d2c4a6 1px 2px);
-  transform: translateZ(calc(var(--CW) * -1));
+  transform: translateZ(calc((var(--CW) - var(--overhang)) * -1));
 }
 
 /* Front cover on the right-hand side of the box */
