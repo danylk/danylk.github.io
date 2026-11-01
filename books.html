@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bookshelf · Sunkwan Kim</title>
+  <meta name="description" content="Books Sunkwan Kim has read, for academics and for fun.">
+  <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+  <link rel="icon" href="favicon.png" type="image/png" sizes="192x192">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <script>
+    // Dark is the default; apply a saved light choice before the page paints
+    try {
+      if (localStorage.getItem('theme') === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..700;1,300..700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button class="theme-toggle" type="button" aria-label="Switch to light theme" hidden>
+    <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+  </button>
+  <main class="page">
+
+    <header class="subhead">
+      <a class="back" href="index.html">← Sunkwan Kim</a>
+      <h1 class="page-title">Bookshelf</h1>
+      <p class="statement">Books I’ve read, for academics and for fun.</p>
+    </header>
+
+    <section class="block" aria-labelledby="academic">
+      <h2 id="academic">Academic</h2>
+      <div class="rows">
+        <article class="row book">
+          <div class="item">
+            <h3>Introduction to Modern Cryptography</h3>
+            <p class="meta">Jonathan Katz and Yehuda Lindell</p>
+          </div>
+        </article>
+        <article class="row book">
+          <div class="item">
+            <h3>A Graduate Course in Applied Cryptography</h3>
+            <p class="meta">Dan Boneh and Victor Shoup</p>
+          </div>
+        </article>
+        <article class="row book">
+          <div class="item">
+            <h3>A Computational Introduction to Number Theory and Algebra</h3>
+            <p class="meta">Victor Shoup</p>
+          </div>
+        </article>
+        <article class="row book">
+          <div class="item">
+            <h3>Proofs, Arguments, and Zero-Knowledge</h3>
+            <p class="meta">Justin Thaler</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="fun">
+      <h2 id="fun">For fun</h2>
+      <div class="rows">
+        <article class="row book">
+          <div class="item">
+            <h3>Les Misérables</h3>
+            <p class="meta">Victor Hugo</p>
+          </div>
+        </article>
+        <article class="row book">
+          <div class="item">
+            <h3>The Road Less Traveled</h3>
+            <p class="meta">M. Scott Peck</p>
+          </div>
+        </article>
+        <article class="row book">
+          <div class="item">
+            <h3>The Code Book</h3>
+            <p class="meta">Simon Singh</p>
+          </div>
+        </article>
+        <article class="row book">
+          <div class="item">
+            <h3>When Breath Becomes Air</h3>
+            <p class="meta">Paul Kalanithi</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p>Last updated October 2026</p>
+    </footer>
+
+  </main>
+  <script src="theme.js"></script>
+  <script data-goatcounter="https://danylk.goatcounter.com/count"
+          async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

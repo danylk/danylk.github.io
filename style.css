@@ -153,6 +153,31 @@ a:focus-visible {
   margin-top: 1rem;
 }
 
+/* Subpage header (Bookshelf): a back link and a smaller title in the
+   same light grotesque as the name on the home page */
+
+.subhead {
+  padding-bottom: 2rem;
+  margin-bottom: 1rem;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 1.25rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.back:hover { color: var(--accent); }
+
+.page-title {
+  margin-bottom: 1rem;
+  font-size: clamp(2.5rem, 9vw, 5rem);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
 /* Sections ---------------------------------------------------------- */
 
 .block {
@@ -282,6 +307,9 @@ a:focus-visible {
     grid-template-columns: var(--year-col) 1fr;
     column-gap: var(--gap);
   }
+
+  /* Books have no year; keep their text in the entry column */
+  .row.book .item { grid-column: 2; }
 
   /* About and Contact have no year; align them with the entry text */
   .rows > .prose,

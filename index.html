@@ -46,7 +46,7 @@
       <div class="rows">
         <div class="prose">
           <p>I'm finishing a bachelor's degree in Computer Science at <a href="https://www.northeastern.edu/">Northeastern University</a>, with a concentration in Foundations and a minor in Economics, and expect to graduate in December 2026. I enjoy theory in general and cryptography broadly: how schemes are defined, what it takes to prove them secure, and how the pieces build on one another.</p>
-          <p>Outside of cryptography, I’m interested in music, philosophy, and religion.</p>
+          <p>Outside of cryptography, I’m interested in music, philosophy, and religion, and I keep a list of <a href="books.html">books I’ve read</a>.</p>
         </div>
       </div>
     </section>
@@ -319,35 +319,7 @@
       });
     })();
   </script>
-  <script>
-    // Light/dark toggle: dark is the default; the toggle flips the theme
-    // and remembers the visitor's choice.
-    (function () {
-      var root = document.documentElement;
-      var toggle = document.querySelector('.theme-toggle');
-
-      function current() {
-        return root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-      }
-
-      function label() {
-        var next = current() === 'dark' ? 'light' : 'dark';
-        toggle.setAttribute('aria-label', 'Switch to ' + next + ' theme');
-        toggle.title = 'Switch to ' + next + ' theme';
-      }
-
-      toggle.addEventListener('click', function () {
-        var next = current() === 'dark' ? 'light' : 'dark';
-        if (next === 'light') root.setAttribute('data-theme', 'light');
-        else root.removeAttribute('data-theme');
-        try { localStorage.setItem('theme', next); } catch (e) {}
-        label();
-      });
-
-      label();
-      toggle.hidden = false;
-    })();
-  </script>
+  <script src="theme.js"></script>
   <script data-goatcounter="https://danylk.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
 </body>
