@@ -211,10 +211,6 @@ a:focus-visible {
 
 /* Courses are names only, so their rows sit close together */
 .row.course + .row.course { margin-top: 0.6rem; }
-
-/* Books are a title and an author, so their rows sit a little closer */
-.row.book + .row.book { margin-top: 1rem; }
-
 .course .item h3 { font-weight: 500; }
 
 .course .item .meta { margin-bottom: 0; }
@@ -318,10 +314,6 @@ a:focus-visible {
     grid-template-columns: var(--year-col) 1fr;
     column-gap: var(--gap);
   }
-
-  /* Books have no year; keep their text in the entry column */
-  .row.book .item { grid-column: 2; }
-
   /* About and Contact have no year; align them with the entry text */
   .rows > .prose,
   .course-names { margin-left: calc(var(--year-col) + var(--gap)); }

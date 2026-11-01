@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Bookshelf · Sunkwan Kim</title>
-  <meta name="description" content="Books Sunkwan Kim has read, for academics and for fun.">
+  <meta name="description" content="Books Sunkwan Kim has read, for academics, for class, and for fun.">
   <link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
   <link rel="icon" href="favicon.png" type="image/png" sizes="192x192">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -20,6 +20,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..700;1,300..700&display=swap">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="bookshelf.css">
 </head>
 <body>
   <button class="theme-toggle" type="button" aria-label="Switch to light theme" hidden>
@@ -32,411 +33,605 @@
       <a class="back" href="index.html">← Sunkwan Kim</a>
       <h1 class="page-title">Bookshelf</h1>
       <p class="statement">Books I’ve read, for academics, for class, and for fun.</p>
-      <p class="note">I add to this list as I read more, and as I remember books I read before.</p>
+      <p class="note">I add to this list as I read more, and as I remember books I read before. Click a spine to see its cover.</p>
     </header>
 
-    <section class="block" aria-labelledby="academic">
+    <section class="block shelf-block" aria-labelledby="academic">
       <h2 id="academic">Academic</h2>
       <div class="rows">
-        <article class="row book">
-          <div class="item">
-            <h3>A Graduate Course in Applied Cryptography</h3>
-            <p class="meta">Boneh, Dan, and Victor Shoup</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Elementary Number Theory</h3>
-            <p class="meta">Burton, David M.</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Foundations of Cryptography, Volumes I and II</h3>
-            <p class="meta">Goldreich, Oded</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Introduction to Modern Cryptography</h3>
-            <p class="meta">Katz, Jonathan, and Yehuda Lindell</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>A Computational Introduction to Number Theory and Algebra</h3>
-            <p class="meta">Shoup, Victor</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Introduction to the Theory of Computation</h3>
-            <p class="meta">Sipser, Michael</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Proofs, Arguments, and Zero-Knowledge</h3>
-            <p class="meta">Thaler, Justin</p>
-          </div>
-        </article>
+        <ul class="shelf" role="list">
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="A Graduate Course in Applied Cryptography by Boneh, Dan, and Victor Shoup"
+                    data-title="A Graduate Course in Applied Cryptography" data-author="Boneh, Dan, and Victor Shoup"
+                    style="--h:12.90rem; --w:3.15rem; --cloth:#e4d8bd; --ink-on:#2a2620">
+              <span class="spine-title">A Graduate Course in Applied Cryptography</span>
+              <span class="spine-author">Boneh</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Elementary Number Theory by Burton, David M."
+                    data-title="Elementary Number Theory" data-author="Burton, David M." data-cover="covers/elementary-number-theory.jpg"
+                    style="--h:14.65rem; --w:3.31rem; --cloth:#c7ab84; --ink-on:#231d15">
+              <span class="spine-title">Elementary Number Theory</span>
+              <span class="spine-author">Burton</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Foundations of Cryptography, Volumes I and II by Goldreich, Oded"
+                    data-title="Foundations of Cryptography, Volumes I and II" data-author="Goldreich, Oded" data-cover="covers/foundations-of-cryptography-volumes-i-and-ii.jpg"
+                    style="--h:12.40rem; --w:4.34rem; --cloth:#1f5c5a; --ink-on:#e8efe9">
+              <span class="spine-title">Foundations of Cryptography, Volumes I and II</span>
+              <span class="spine-author">Goldreich</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Introduction to Modern Cryptography by Katz, Jonathan, and Yehuda Lindell"
+                    data-title="Introduction to Modern Cryptography" data-author="Katz, Jonathan, and Yehuda Lindell" data-cover="covers/introduction-to-modern-cryptography.jpg"
+                    style="--h:13.90rem; --w:3.15rem; --cloth:#2b2b2e; --ink-on:#e6e3dc">
+              <span class="spine-title">Introduction to Modern Cryptography</span>
+              <span class="spine-author">Katz</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="A Computational Introduction to Number Theory and Algebra by Shoup, Victor"
+                    data-title="A Computational Introduction to Number Theory and Algebra" data-author="Shoup, Victor" data-cover="covers/a-computational-introduction-to-number-theory-and-algebra.jpg"
+                    style="--h:12.40rem; --w:4.18rem; --cloth:#8c9a7c; --ink-on:#1d2219">
+              <span class="spine-title">A Computational Introduction to Number Theory and Algebra</span>
+              <span class="spine-author">Shoup</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Introduction to the Theory of Computation by Sipser, Michael"
+                    data-title="Introduction to the Theory of Computation" data-author="Sipser, Michael" data-cover="covers/introduction-to-the-theory-of-computation.jpg"
+                    style="--h:13.15rem; --w:3.31rem; --cloth:#6b2430; --ink-on:#f1e6d8">
+              <span class="spine-title">Introduction to the Theory of Computation</span>
+              <span class="spine-author">Sipser</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Proofs, Arguments, and Zero-Knowledge by Thaler, Justin"
+                    data-title="Proofs, Arguments, and Zero-Knowledge" data-author="Thaler, Justin"
+                    style="--h:14.90rem; --w:3.39rem; --cloth:#4a5560; --ink-on:#eef0ec">
+              <span class="spine-title">Proofs, Arguments, and Zero-Knowledge</span>
+              <span class="spine-author">Thaler</span>
+            </button>
+          </li>
+        </ul>
       </div>
     </section>
-
-    <section class="block" aria-labelledby="class">
+    <section class="block shelf-block" aria-labelledby="class">
       <h2 id="class">For class</h2>
       <div class="rows">
-        <article class="row book">
-          <div class="item">
-            <h3>Feed</h3>
-            <p class="meta">Anderson, M. T.</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Nicomachean Ethics</h3>
-            <p class="meta">Aristotle</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Politics</h3>
-            <p class="meta">Aristotle</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Oroonoko</h3>
-            <p class="meta">Behn, Aphra</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Analects</h3>
-            <p class="meta">Confucius</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Galore</h3>
-            <p class="meta">Crummey, Michael</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Man’s Search for Meaning</h3>
-            <p class="meta">Frankl, Viktor E.</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Lord of the Flies</h3>
-            <p class="meta">Golding, William</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Outsiders</h3>
-            <p class="meta">Hinton, S. E.</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Iliad</h3>
-            <p class="meta">Homer</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Metamorphosis</h3>
-            <p class="meta">Kafka, Franz</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Giver</h3>
-            <p class="meta">Lowry, Lois</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>North Woods</h3>
-            <p class="meta">Mason, Daniel</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Road</h3>
-            <p class="meta">McCarthy, Cormac</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>1984</h3>
-            <p class="meta">Orwell, George</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Thrilling Adventures of Lovelace and Babbage</h3>
-            <p class="meta">Padua, Sydney</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Apology</h3>
-            <p class="meta">Plato</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Crito</h3>
-            <p class="meta">Plato</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Meno</h3>
-            <p class="meta">Plato</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Phaedo</h3>
-            <p class="meta">Plato</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Republic</h3>
-            <p class="meta">Plato</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Rulers, Religion, and Riches: Why the West Got Rich and the Middle East Did Not</h3>
-            <p class="meta">Rubin, Jared</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Holes</h3>
-            <p class="meta">Sachar, Louis</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Persepolis</h3>
-            <p class="meta">Satrapi, Marjane</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Old Man Who Read Love Stories</h3>
-            <p class="meta">Sepúlveda, Luis</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Maus</h3>
-            <p class="meta">Spiegelman, Art</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Religion and the Rise of Capitalism</h3>
-            <p class="meta">Tawney, R. H.</p>
-          </div>
-        </article>
+        <ul class="shelf" role="list">
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Feed by Anderson, M. T."
+                    data-title="Feed" data-author="Anderson, M. T." data-cover="covers/feed.jpg"
+                    style="--h:14.40rem; --w:2.28rem; --cloth:#23344a; --ink-on:#ece6d6">
+              <span class="spine-title">Feed</span>
+              <span class="spine-author">Anderson</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Nicomachean Ethics by Aristotle"
+                    data-title="Nicomachean Ethics" data-author="Aristotle" data-cover="covers/nicomachean-ethics.jpg"
+                    style="--h:12.90rem; --w:2.20rem; --cloth:#b88a2e; --ink-on:#1d1a14">
+              <span class="spine-title">Nicomachean Ethics</span>
+              <span class="spine-author">Aristotle</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Politics by Aristotle"
+                    data-title="Politics" data-author="Aristotle" data-cover="covers/politics.jpg"
+                    style="--h:14.90rem; --w:2.44rem; --cloth:#23344a; --ink-on:#ece6d6">
+              <span class="spine-title">Politics</span>
+              <span class="spine-author">Aristotle</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Oroonoko by Behn, Aphra"
+                    data-title="Oroonoko" data-author="Behn, Aphra" data-cover="covers/oroonoko.jpg"
+                    style="--h:14.65rem; --w:2.28rem; --cloth:#c7ab84; --ink-on:#231d15">
+              <span class="spine-title">Oroonoko</span>
+              <span class="spine-author">Behn</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Analects by Confucius"
+                    data-title="The Analects" data-author="Confucius" data-cover="covers/the-analects.jpg"
+                    style="--h:13.40rem; --w:2.20rem; --cloth:#2f4a3a; --ink-on:#e9e4d2">
+              <span class="spine-title">The Analects</span>
+              <span class="spine-author">Confucius</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Galore by Crummey, Michael"
+                    data-title="Galore" data-author="Crummey, Michael" data-cover="covers/galore.jpg"
+                    style="--h:15.40rem; --w:2.44rem; --cloth:#4b3150; --ink-on:#efe6ee">
+              <span class="spine-title">Galore</span>
+              <span class="spine-author">Crummey</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Man’s Search for Meaning by Frankl, Viktor E."
+                    data-title="Man’s Search for Meaning" data-author="Frankl, Viktor E." data-cover="covers/mans-search-for-meaning.jpg"
+                    style="--h:15.15rem; --w:3.15rem; --cloth:#4a5560; --ink-on:#eef0ec">
+              <span class="spine-title">Man’s Search for Meaning</span>
+              <span class="spine-author">Frankl</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Lord of the Flies by Golding, William"
+                    data-title="Lord of the Flies" data-author="Golding, William" data-cover="covers/lord-of-the-flies.jpg"
+                    style="--h:14.65rem; --w:2.44rem; --cloth:#8c9a7c; --ink-on:#1d2219">
+              <span class="spine-title">Lord of the Flies</span>
+              <span class="spine-author">Golding</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Outsiders by Hinton, S. E."
+                    data-title="The Outsiders" data-author="Hinton, S. E." data-cover="covers/the-outsiders.jpg"
+                    style="--h:14.15rem; --w:2.44rem; --cloth:#4b3150; --ink-on:#efe6ee">
+              <span class="spine-title">The Outsiders</span>
+              <span class="spine-author">Hinton</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Iliad by Homer"
+                    data-title="The Iliad" data-author="Homer" data-cover="covers/the-iliad.jpg"
+                    style="--h:15.15rem; --w:2.44rem; --cloth:#2b2b2e; --ink-on:#e6e3dc">
+              <span class="spine-title">The Iliad</span>
+              <span class="spine-author">Homer</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Metamorphosis by Kafka, Franz"
+                    data-title="The Metamorphosis" data-author="Kafka, Franz" data-cover="covers/the-metamorphosis.jpg"
+                    style="--h:12.90rem; --w:2.36rem; --cloth:#c7ab84; --ink-on:#231d15">
+              <span class="spine-title">The Metamorphosis</span>
+              <span class="spine-author">Kafka</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Giver by Lowry, Lois"
+                    data-title="The Giver" data-author="Lowry, Lois" data-cover="covers/the-giver.jpg"
+                    style="--h:12.40rem; --w:2.20rem; --cloth:#2f4a3a; --ink-on:#e9e4d2">
+              <span class="spine-title">The Giver</span>
+              <span class="spine-author">Lowry</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="North Woods by Mason, Daniel"
+                    data-title="North Woods" data-author="Mason, Daniel" data-cover="covers/north-woods.jpg"
+                    style="--h:12.90rem; --w:2.36rem; --cloth:#6b2430; --ink-on:#f1e6d8">
+              <span class="spine-title">North Woods</span>
+              <span class="spine-author">Mason</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Road by McCarthy, Cormac"
+                    data-title="The Road" data-author="McCarthy, Cormac" data-cover="covers/the-road.jpg"
+                    style="--h:13.40rem; --w:2.36rem; --cloth:#23344a; --ink-on:#ece6d6">
+              <span class="spine-title">The Road</span>
+              <span class="spine-author">McCarthy</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="1984 by Orwell, George"
+                    data-title="1984" data-author="Orwell, George" data-cover="covers/1984.jpg"
+                    style="--h:15.15rem; --w:2.28rem; --cloth:#b88a2e; --ink-on:#1d1a14">
+              <span class="spine-title">1984</span>
+              <span class="spine-author">Orwell</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Thrilling Adventures of Lovelace and Babbage by Padua, Sydney"
+                    data-title="The Thrilling Adventures of Lovelace and Babbage" data-author="Padua, Sydney" data-cover="covers/the-thrilling-adventures-of-lovelace-and-babbage.jpg"
+                    style="--h:14.15rem; --w:4.10rem; --cloth:#e4d8bd; --ink-on:#2a2620">
+              <span class="spine-title">The Thrilling Adventures of Lovelace and Babbage</span>
+              <span class="spine-author">Padua</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Apology by Plato"
+                    data-title="Apology" data-author="Plato" data-cover="covers/plato-five-dialogues.jpg"
+                    style="--h:13.90rem; --w:2.36rem; --cloth:#1f5c5a; --ink-on:#e8efe9">
+              <span class="spine-title">Apology</span>
+              <span class="spine-author">Plato</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Crito by Plato"
+                    data-title="Crito" data-author="Plato" data-cover="covers/plato-five-dialogues.jpg"
+                    style="--h:13.90rem; --w:2.28rem; --cloth:#4a5560; --ink-on:#eef0ec">
+              <span class="spine-title">Crito</span>
+              <span class="spine-author">Plato</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Meno by Plato"
+                    data-title="Meno" data-author="Plato" data-cover="covers/plato-five-dialogues.jpg"
+                    style="--h:12.65rem; --w:2.28rem; --cloth:#8c9a7c; --ink-on:#1d2219">
+              <span class="spine-title">Meno</span>
+              <span class="spine-author">Plato</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Phaedo by Plato"
+                    data-title="Phaedo" data-author="Plato" data-cover="covers/plato-five-dialogues.jpg"
+                    style="--h:13.90rem; --w:2.20rem; --cloth:#2f4a3a; --ink-on:#e9e4d2">
+              <span class="spine-title">Phaedo</span>
+              <span class="spine-author">Plato</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Republic by Plato"
+                    data-title="The Republic" data-author="Plato" data-cover="covers/the-republic.jpg"
+                    style="--h:15.15rem; --w:2.28rem; --cloth:#2b2b2e; --ink-on:#e6e3dc">
+              <span class="spine-title">The Republic</span>
+              <span class="spine-author">Plato</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Rulers, Religion, and Riches: Why the West Got Rich and the Middle East Did Not by Rubin, Jared"
+                    data-title="Rulers, Religion, and Riches: Why the West Got Rich and the Middle East Did Not" data-author="Rubin, Jared"
+                    style="--h:12.65rem; --w:3.39rem; --cloth:#8c9a7c; --ink-on:#1d2219">
+              <span class="spine-title">Rulers, Religion, and Riches</span>
+              <span class="spine-author">Rubin</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Holes by Sachar, Louis"
+                    data-title="Holes" data-author="Sachar, Louis" data-cover="covers/holes.jpg"
+                    style="--h:14.40rem; --w:2.28rem; --cloth:#8a4a2a; --ink-on:#f3e7da">
+              <span class="spine-title">Holes</span>
+              <span class="spine-author">Sachar</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Persepolis by Satrapi, Marjane"
+                    data-title="Persepolis" data-author="Satrapi, Marjane" data-cover="covers/persepolis.jpg"
+                    style="--h:13.90rem; --w:2.28rem; --cloth:#8c9a7c; --ink-on:#1d2219">
+              <span class="spine-title">Persepolis</span>
+              <span class="spine-author">Satrapi</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Old Man Who Read Love Stories by Sepúlveda, Luis"
+                    data-title="The Old Man Who Read Love Stories" data-author="Sepúlveda, Luis"
+                    style="--h:13.15rem; --w:3.39rem; --cloth:#4b3150; --ink-on:#efe6ee">
+              <span class="spine-title">The Old Man Who Read Love Stories</span>
+              <span class="spine-author">Sepúlveda</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Maus by Spiegelman, Art"
+                    data-title="Maus" data-author="Spiegelman, Art" data-cover="covers/maus.jpg"
+                    style="--h:15.15rem; --w:2.20rem; --cloth:#2b2b2e; --ink-on:#e6e3dc">
+              <span class="spine-title">Maus</span>
+              <span class="spine-author">Spiegelman</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Religion and the Rise of Capitalism by Tawney, R. H."
+                    data-title="Religion and the Rise of Capitalism" data-author="Tawney, R. H." data-cover="covers/religion-and-the-rise-of-capitalism.jpg"
+                    style="--h:15.15rem; --w:3.39rem; --cloth:#1f5c5a; --ink-on:#e8efe9">
+              <span class="spine-title">Religion and the Rise of Capitalism</span>
+              <span class="spine-author">Tawney</span>
+            </button>
+          </li>
+        </ul>
       </div>
     </section>
-
-    <section class="block" aria-labelledby="fun">
+    <section class="block shelf-block" aria-labelledby="fun">
       <h2 id="fun">For fun</h2>
       <div class="rows">
-        <article class="row book">
-          <div class="item">
-            <h3>Pride and Prejudice</h3>
-            <p class="meta">Austen, Jane</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>How to Win Friends and Influence People</h3>
-            <p class="meta">Carnegie, Dale</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>No Longer Human</h3>
-            <p class="meta">Dazai, Osamu</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Sophie’s World</h3>
-            <p class="meta">Gaarder, Jostein</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Baptism: Its Purpose, Practice and Power</h3>
-            <p class="meta">Green, Michael</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Sapiens: A Brief History of Humankind</h3>
-            <p class="meta">Harari, Yuval Noah</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Be Your Future Self Now: The Science of Intentional Transformation</h3>
-            <p class="meta">Hardy, Benjamin</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Old Man and the Sea</h3>
-            <p class="meta">Hemingway, Ernest</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Demian</h3>
-            <p class="meta">Hesse, Hermann</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Les Misérables</h3>
-            <p class="meta">Hugo, Victor</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Thinking, Fast and Slow</h3>
-            <p class="meta">Kahneman, Daniel</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>When Breath Becomes Air</h3>
-            <p class="meta">Kalanithi, Paul</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Freedom of Self-Forgetfulness</h3>
-            <p class="meta">Keller, Timothy</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Bird That Drinks Tears, Volumes 1–4</h3>
-            <p class="meta">Lee, Yeongdo</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Mere Christianity</h3>
-            <p class="meta">Lewis, C. S.</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Problem of Pain</h3>
-            <p class="meta">Lewis, C. S.</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Screwtape Letters</h3>
-            <p class="meta">Lewis, C. S.</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Evidence That Demands a Verdict</h3>
-            <p class="meta">McDowell, Josh</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Animal Farm</h3>
-            <p class="meta">Orwell, George</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Road Less Traveled</h3>
-            <p class="meta">Peck, M. Scott</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>A Long Obedience in the Same Direction</h3>
-            <p class="meta">Peterson, Eugene H.</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Cosmos</h3>
-            <p class="meta">Sagan, Carl</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Little Prince</h3>
-            <p class="meta">Saint-Exupéry, Antoine de</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Code Book</h3>
-            <p class="meta">Singh, Simon</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Wealth of Nations</h3>
-            <p class="meta">Smith, Adam</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Time Machine</h3>
-            <p class="meta">Wells, H. G.</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>The Picture of Dorian Gray</h3>
-            <p class="meta">Wilde, Oscar</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Our Twisted Hero</h3>
-            <p class="meta">Yi, Munyeol</p>
-          </div>
-        </article>
-        <article class="row book">
-          <div class="item">
-            <h3>Sky, Wind, Star and Poem</h3>
-            <p class="meta">Yun, Dong-ju</p>
-          </div>
-        </article>
+        <ul class="shelf" role="list">
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Pride and Prejudice by Austen, Jane"
+                    data-title="Pride and Prejudice" data-author="Austen, Jane" data-cover="covers/pride-and-prejudice.jpg"
+                    style="--h:13.15rem; --w:2.20rem; --cloth:#2b2b2e; --ink-on:#e6e3dc">
+              <span class="spine-title">Pride and Prejudice</span>
+              <span class="spine-author">Austen</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="How to Win Friends and Influence People by Carnegie, Dale"
+                    data-title="How to Win Friends and Influence People" data-author="Carnegie, Dale" data-cover="covers/how-to-win-friends-and-influence-people.jpg"
+                    style="--h:12.90rem; --w:3.15rem; --cloth:#b88a2e; --ink-on:#1d1a14">
+              <span class="spine-title">How to Win Friends and Influence People</span>
+              <span class="spine-author">Carnegie</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="No Longer Human by Dazai, Osamu"
+                    data-title="No Longer Human" data-author="Dazai, Osamu" data-cover="covers/no-longer-human.jpg"
+                    style="--h:13.65rem; --w:2.20rem; --cloth:#8a4a2a; --ink-on:#f3e7da">
+              <span class="spine-title">No Longer Human</span>
+              <span class="spine-author">Dazai</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Sophie’s World by Gaarder, Jostein"
+                    data-title="Sophie’s World" data-author="Gaarder, Jostein" data-cover="covers/sophies-world.jpg"
+                    style="--h:13.90rem; --w:2.44rem; --cloth:#23344a; --ink-on:#ece6d6">
+              <span class="spine-title">Sophie’s World</span>
+              <span class="spine-author">Gaarder</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Baptism: Its Purpose, Practice and Power by Green, Michael"
+                    data-title="Baptism: Its Purpose, Practice and Power" data-author="Green, Michael" data-cover="covers/baptism-its-purpose-practice-and-power.jpg"
+                    style="--h:12.40rem; --w:2.20rem; --cloth:#8a4a2a; --ink-on:#f3e7da">
+              <span class="spine-title">Baptism</span>
+              <span class="spine-author">Green</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Sapiens: A Brief History of Humankind by Harari, Yuval Noah"
+                    data-title="Sapiens: A Brief History of Humankind" data-author="Harari, Yuval Noah" data-cover="covers/sapiens-a-brief-history-of-humankind.jpg"
+                    style="--h:12.65rem; --w:2.28rem; --cloth:#b88a2e; --ink-on:#1d1a14">
+              <span class="spine-title">Sapiens</span>
+              <span class="spine-author">Harari</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Be Your Future Self Now: The Science of Intentional Transformation by Hardy, Benjamin"
+                    data-title="Be Your Future Self Now: The Science of Intentional Transformation" data-author="Hardy, Benjamin" data-cover="covers/be-your-future-self-now-the-science-of-intentional-transform.jpg"
+                    style="--h:12.65rem; --w:3.15rem; --cloth:#e4d8bd; --ink-on:#2a2620">
+              <span class="spine-title">Be Your Future Self Now</span>
+              <span class="spine-author">Hardy</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Old Man and the Sea by Hemingway, Ernest"
+                    data-title="The Old Man and the Sea" data-author="Hemingway, Ernest" data-cover="covers/the-old-man-and-the-sea.jpg"
+                    style="--h:14.40rem; --w:3.23rem; --cloth:#2b2b2e; --ink-on:#e6e3dc">
+              <span class="spine-title">The Old Man and the Sea</span>
+              <span class="spine-author">Hemingway</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Demian by Hesse, Hermann"
+                    data-title="Demian" data-author="Hesse, Hermann" data-cover="covers/demian.jpg"
+                    style="--h:15.40rem; --w:2.44rem; --cloth:#1f5c5a; --ink-on:#e8efe9">
+              <span class="spine-title">Demian</span>
+              <span class="spine-author">Hesse</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Les Misérables by Hugo, Victor"
+                    data-title="Les Misérables" data-author="Hugo, Victor" data-cover="covers/les-miserables.jpg"
+                    style="--h:14.15rem; --w:2.20rem; --cloth:#4b3150; --ink-on:#efe6ee">
+              <span class="spine-title">Les Misérables</span>
+              <span class="spine-author">Hugo</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Thinking, Fast and Slow by Kahneman, Daniel"
+                    data-title="Thinking, Fast and Slow" data-author="Kahneman, Daniel" data-cover="covers/thinking-fast-and-slow.jpg"
+                    style="--h:13.15rem; --w:3.15rem; --cloth:#2b2b2e; --ink-on:#e6e3dc">
+              <span class="spine-title">Thinking, Fast and Slow</span>
+              <span class="spine-author">Kahneman</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="When Breath Becomes Air by Kalanithi, Paul"
+                    data-title="When Breath Becomes Air" data-author="Kalanithi, Paul" data-cover="covers/when-breath-becomes-air.jpg"
+                    style="--h:14.65rem; --w:3.39rem; --cloth:#6b2430; --ink-on:#f1e6d8">
+              <span class="spine-title">When Breath Becomes Air</span>
+              <span class="spine-author">Kalanithi</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Freedom of Self-Forgetfulness by Keller, Timothy"
+                    data-title="The Freedom of Self-Forgetfulness" data-author="Keller, Timothy" data-cover="covers/the-freedom-of-self-forgetfulness.jpg"
+                    style="--h:14.65rem; --w:3.39rem; --cloth:#8a4a2a; --ink-on:#f3e7da">
+              <span class="spine-title">The Freedom of Self-Forgetfulness</span>
+              <span class="spine-author">Keller</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Bird That Drinks Tears, Volumes 1–4 by Lee, Yeongdo"
+                    data-title="The Bird That Drinks Tears, Volumes 1–4" data-author="Lee, Yeongdo"
+                    style="--h:14.90rem; --w:3.23rem; --cloth:#2b2b2e; --ink-on:#e6e3dc">
+              <span class="spine-title">The Bird That Drinks Tears, Volumes 1–4</span>
+              <span class="spine-author">Lee</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Mere Christianity by Lewis, C. S."
+                    data-title="Mere Christianity" data-author="Lewis, C. S." data-cover="covers/mere-christianity.jpg"
+                    style="--h:13.15rem; --w:2.36rem; --cloth:#2f4a3a; --ink-on:#e9e4d2">
+              <span class="spine-title">Mere Christianity</span>
+              <span class="spine-author">Lewis</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Problem of Pain by Lewis, C. S."
+                    data-title="The Problem of Pain" data-author="Lewis, C. S." data-cover="covers/the-problem-of-pain.jpg"
+                    style="--h:12.40rem; --w:2.36rem; --cloth:#4a5560; --ink-on:#eef0ec">
+              <span class="spine-title">The Problem of Pain</span>
+              <span class="spine-author">Lewis</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Screwtape Letters by Lewis, C. S."
+                    data-title="The Screwtape Letters" data-author="Lewis, C. S." data-cover="covers/the-screwtape-letters.jpg"
+                    style="--h:12.65rem; --w:2.20rem; --cloth:#23344a; --ink-on:#ece6d6">
+              <span class="spine-title">The Screwtape Letters</span>
+              <span class="spine-author">Lewis</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Evidence That Demands a Verdict by McDowell, Josh"
+                    data-title="Evidence That Demands a Verdict" data-author="McDowell, Josh" data-cover="covers/evidence-that-demands-a-verdict.jpg"
+                    style="--h:13.40rem; --w:3.39rem; --cloth:#4a5560; --ink-on:#eef0ec">
+              <span class="spine-title">Evidence That Demands a Verdict</span>
+              <span class="spine-author">McDowell</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Animal Farm by Orwell, George"
+                    data-title="Animal Farm" data-author="Orwell, George" data-cover="covers/animal-farm.jpg"
+                    style="--h:14.40rem; --w:2.44rem; --cloth:#8c9a7c; --ink-on:#1d2219">
+              <span class="spine-title">Animal Farm</span>
+              <span class="spine-author">Orwell</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Road Less Traveled by Peck, M. Scott"
+                    data-title="The Road Less Traveled" data-author="Peck, M. Scott" data-cover="covers/the-road-less-traveled.jpg"
+                    style="--h:13.15rem; --w:3.39rem; --cloth:#1f5c5a; --ink-on:#e8efe9">
+              <span class="spine-title">The Road Less Traveled</span>
+              <span class="spine-author">Peck</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="A Long Obedience in the Same Direction by Peterson, Eugene H."
+                    data-title="A Long Obedience in the Same Direction" data-author="Peterson, Eugene H." data-cover="covers/a-long-obedience-in-the-same-direction.jpg"
+                    style="--h:12.65rem; --w:3.31rem; --cloth:#2b2b2e; --ink-on:#e6e3dc">
+              <span class="spine-title">A Long Obedience in the Same Direction</span>
+              <span class="spine-author">Peterson</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Cosmos by Sagan, Carl"
+                    data-title="Cosmos" data-author="Sagan, Carl" data-cover="covers/cosmos.jpg"
+                    style="--h:14.15rem; --w:2.36rem; --cloth:#4a5560; --ink-on:#eef0ec">
+              <span class="spine-title">Cosmos</span>
+              <span class="spine-author">Sagan</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Little Prince by Saint-Exupéry, Antoine de"
+                    data-title="The Little Prince" data-author="Saint-Exupéry, Antoine de" data-cover="covers/the-little-prince.jpg"
+                    style="--h:13.40rem; --w:2.20rem; --cloth:#8c9a7c; --ink-on:#1d2219">
+              <span class="spine-title">The Little Prince</span>
+              <span class="spine-author">Saint-Exupéry</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Code Book by Singh, Simon"
+                    data-title="The Code Book" data-author="Singh, Simon" data-cover="covers/the-code-book.jpg"
+                    style="--h:14.40rem; --w:2.20rem; --cloth:#4a5560; --ink-on:#eef0ec">
+              <span class="spine-title">The Code Book</span>
+              <span class="spine-author">Singh</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Wealth of Nations by Smith, Adam"
+                    data-title="The Wealth of Nations" data-author="Smith, Adam" data-cover="covers/the-wealth-of-nations.jpg"
+                    style="--h:12.90rem; --w:2.36rem; --cloth:#6b2430; --ink-on:#f1e6d8">
+              <span class="spine-title">The Wealth of Nations</span>
+              <span class="spine-author">Smith</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Time Machine by Wells, H. G."
+                    data-title="The Time Machine" data-author="Wells, H. G." data-cover="covers/the-time-machine.jpg"
+                    style="--h:13.15rem; --w:2.36rem; --cloth:#1f5c5a; --ink-on:#e8efe9">
+              <span class="spine-title">The Time Machine</span>
+              <span class="spine-author">Wells</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="The Picture of Dorian Gray by Wilde, Oscar"
+                    data-title="The Picture of Dorian Gray" data-author="Wilde, Oscar" data-cover="covers/the-picture-of-dorian-gray.jpg"
+                    style="--h:13.65rem; --w:3.31rem; --cloth:#b88a2e; --ink-on:#1d1a14">
+              <span class="spine-title">The Picture of Dorian Gray</span>
+              <span class="spine-author">Wilde</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Our Twisted Hero by Yi, Munyeol"
+                    data-title="Our Twisted Hero" data-author="Yi, Munyeol" data-cover="covers/our-twisted-hero.jpg"
+                    style="--h:14.90rem; --w:2.20rem; --cloth:#1f5c5a; --ink-on:#e8efe9">
+              <span class="spine-title">Our Twisted Hero</span>
+              <span class="spine-author">Yi</span>
+            </button>
+          </li>
+          <li class="slot">
+            <button class="spine" type="button" aria-expanded="false"
+                    aria-label="Sky, Wind, Star and Poem by Yun, Dong-ju"
+                    data-title="Sky, Wind, Star and Poem" data-author="Yun, Dong-ju" data-cover="covers/sky-wind-star-and-poem.jpg"
+                    style="--h:14.15rem; --w:3.39rem; --cloth:#e4d8bd; --ink-on:#2a2620">
+              <span class="spine-title">Sky, Wind, Star and Poem</span>
+              <span class="spine-author">Yun</span>
+            </button>
+          </li>
+        </ul>
       </div>
     </section>
 
     <footer class="foot">
-      <p>Last updated October 2026</p>
+      <p>Last updated October 2026. Covers from <a href="https://openlibrary.org/">Open Library</a>.</p>
     </footer>
 
   </main>
   <script src="theme.js"></script>
+  <script src="bookshelf.js"></script>
   <script data-goatcounter="https://danylk.goatcounter.com/count"
           async src="//gc.zgo.at/count.js"></script>
 </body>
