@@ -227,6 +227,10 @@
   inset: 0;
   border: var(--board) solid var(--cloth);
   border-top: 0;
+  /* The side edges reach 1px past the board's inner face, covering its
+     top: where the two only met along a line, a light seam showed */
+  border-left-width: calc(var(--board) + 1px);
+  border-right-width: calc(var(--board) + 1px);
   border-radius: 1px;
 }
 
@@ -240,12 +244,10 @@
 .book::before {
   content: "";
   position: absolute;
-  /* 1px taller at the top so it tucks under the board's top edge: where
-     they only met along a line, a light seam showed through */
-  top: -1px;
+  top: 0;
   left: calc(50% - var(--CW) / 2);
   width: var(--CW);
-  height: calc(100% + 1px);
+  height: 100%;
   background: var(--cloth);
   box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.1);
   transform: translateZ(calc(var(--CW) / -2)) rotateY(-90deg) translateZ(calc(var(--W) / 2 - var(--board)));
