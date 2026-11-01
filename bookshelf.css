@@ -125,10 +125,13 @@
 .spine-face::before { top: 0.5rem; }
 .spine-face::after { bottom: 0.45rem; }
 
+/* The title fills the spine between the top and the surname. bookshelf.js
+   shrinks its font until the whole title fits (fitTitles). */
 .spine-title {
+  flex: 1 1 0;
+  min-inline-size: 0;
   min-block-size: 0;
-  /* Only whole columns of text (the build sets --cols per spine) */
-  max-block-size: calc(var(--cols, 2) * 1.15em);
+  max-block-size: 100%;
   overflow: hidden;
   font-size: 0.78rem;
   font-weight: 600;
@@ -138,7 +141,7 @@
 
 /* Thin books (short page counts) get smaller spine text */
 .slot.thin .spine-face { padding-left: 0.2rem; padding-right: 0.2rem; gap: 0.45rem; }
-.slot.thin .spine-title { font-size: 0.68rem; line-height: 1.1; max-block-size: calc(var(--cols, 1) * 1.1em); }
+.slot.thin .spine-title { font-size: 0.68rem; line-height: 1.1; }
 .slot.thin .spine-author { font-size: 0.56rem; }
 
 .spine-author {
@@ -196,6 +199,15 @@
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.25;
+}
+.cover-face.typo .ko {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.35;
+  word-break: keep-all;
+  opacity: 0.9;
 }
 .cover-face.typo .a {
   font-size: 0.72rem;

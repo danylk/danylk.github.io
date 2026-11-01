@@ -9,6 +9,30 @@
   var still = window.matchMedia('(prefers-reduced-motion: reduce)');
   var current = null;
 
+  // Show every word of every spine title: start from the stylesheet's size
+  // and shrink until the title no longer overflows its spine (text wraps
+  // into extra columns across the spine as it gets smaller).
+  var titles = Array.prototype.slice.call(document.querySelectorAll('.spine-title'));
+  function fitTitles() {
+    titles.forEach(function (el) {
+      el.style.fontSize = '';
+      var size = parseFloat(getComputedStyle(el).fontSize);
+      var guard = 0;
+      while ((el.scrollWidth > el.clientWidth + 0.5 || el.scrollHeight > el.clientHeight + 0.5)
+             && size > 5 && guard++ < 40) {
+        size *= 0.94;
+        el.style.fontSize = size.toFixed(2) + 'px';
+      }
+    });
+  }
+  fitTitles();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitTitles);
+  var resizeTimer = null;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(fitTitles, 150);
+  });
+
   function load(slot) {
     var img = slot.querySelector('img[data-src]');
     if (img && !img.getAttribute('src')) img.src = img.dataset.src;
