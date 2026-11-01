@@ -62,15 +62,19 @@ html { overflow-anchor: none; }
   perspective-origin: 50% 35%;
 }
 .slot.open { width: calc(var(--CW) + 1.25rem); }
-/* The opened book's caption floats over the row above */
-.slot.open,
+/* Paint order, highest first: the book being opened (its caption floats
+   over the row above), a book being put back, then a hovered or focused
+   book. The hover rules skip open and closing books: being as specific
+   and later in the file, they used to override these and let a closing
+   book cover the one just opened next to it. */
+.slot.open { z-index: 4; }
 .slot.closing { z-index: 3; }
 /* A tipped book's top is wider than its slot; keep it above the books
    next to it (later slots would otherwise paint over it) */
 @media (hover: hover) {
-  .slot:hover { z-index: 2; }
+  .slot:not(.open):not(.closing):hover { z-index: 2; }
 }
-.slot:has(.hit:focus-visible) { z-index: 2; }
+.slot:not(.open):not(.closing):has(.hit:focus-visible) { z-index: 2; }
 
 /* Hover (or keyboard focus) tips the book toward the viewer from the top;
    the lift (13% of the book's height, about 0.19 of its depth) makes it
