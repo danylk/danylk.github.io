@@ -2,39 +2,30 @@
    The ledger layout with a large light grotesque name and a year
    column; only the photo's crop, size and placement differ. */
 
+/* Dark is the default theme; the light theme applies only when the
+   visitor picks it with the toggle (saved as data-theme="light"). */
 :root {
-  --paper:  #F4F5F3;
-  --ink:    #16181B;
-  --muted:  #687079;
-  --rule:   #D9DCD8;
-  --accent: #0E6B5C;
+  --paper:  #151718;
+  --ink:    #E7E9E6;
+  --muted:  #9AA2A8;
+  --rule:   #2D3133;
+  --accent: #5FC4AE;
 
   --sans: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
   --label-col: 9rem;
   --year-col: 5.5rem;
   --gap: 2rem;
   --gutter: 16px;
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper:  #151718;
-    --ink:    #E7E9E6;
-    --muted:  #9AA2A8;
-    --rule:   #2D3133;
-    --accent: #5FC4AE;
-    color-scheme: dark;
-  }
-}
-
-:root[data-theme="dark"] {
-  --paper:  #151718;
-  --ink:    #E7E9E6;
-  --muted:  #9AA2A8;
-  --rule:   #2D3133;
-  --accent: #5FC4AE;
   color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --paper:  #F4F5F3;
+  --ink:    #16181B;
+  --muted:  #687079;
+  --rule:   #D9DCD8;
+  --accent: #0E6B5C;
+  color-scheme: light;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -71,7 +62,50 @@ a:focus-visible {
 .page {
   max-width: 68rem;
   margin: 0 auto;
-  padding: 2.5rem var(--gutter) 3rem;
+  /* Top padding leaves room for the theme toggle above the name */
+  padding: 3.75rem var(--gutter) 3rem;
+}
+
+/* Theme toggle: a small round button pinned to the top-left corner.
+   It shows a sun in the dark theme (click for light) and a moon in the
+   light theme (click for dark). */
+
+.theme-toggle {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.theme-toggle[hidden] { display: none; }
+
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.icon-moon { display: none; }
+
+:root[data-theme="light"] .icon-moon { display: block; }
+:root[data-theme="light"] .icon-sun { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  body { transition: background-color 0.2s ease, color 0.2s ease; }
+  .theme-toggle { transition: color 0.15s ease, border-color 0.15s ease; }
 }
 
 /* Hero: the name is the one large element on the page */
