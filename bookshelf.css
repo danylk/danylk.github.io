@@ -1,16 +1,22 @@
 /* Bookshelf --------------------------------------------------------
-   Each section is a shelf of book spines. Every row of spines stands on
-   a wooden plank, drawn as a background that repeats once per row, so
-   rows must all be exactly --row-h tall. Clicking a spine (bookshelf.js)
-   opens a gap after it and swings the cover in to face out. */
+   Each book is a small 3D box standing on a shelf:
+     spine-face  the front (what you see on the shelf)
+     top-face    the page edges on top
+     cover-face  the front cover, on the box's right-hand side
+   Hover tips the box toward the viewer from the top, showing the page
+   edges. Clicking (bookshelf.js adds .open) turns the box a quarter turn
+   so the cover faces out, as if pulled off the shelf and turned around;
+   its slot widens to fit, pushing the neighbouring books apart.
+   Every shelf row is exactly --row-h tall so the plank background, which
+   repeats once per row, lines up with the books. */
 
 :root {
   --plank-top:  #4a3b2c;
   --plank-edge: #2a2119;
-  --row-h: 17rem;
+  --row-h: 17.5rem;
   --plank: 0.65rem;
-  --open-w: 11.75rem;
-  --card-w: 9.5rem;
+  --s: 1;     /* book height scale */
+  --sw: 1;    /* spine width scale */
 }
 
 :root[data-theme="light"] {
@@ -23,7 +29,6 @@
 .shelf {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
   margin: 0;
   padding: 0 0.35rem;
   list-style: none;
@@ -36,43 +41,79 @@
 }
 
 .slot {
-  display: flex;
-  align-items: flex-end;
+  --H: calc(var(--h) * var(--s) * 1rem);
+  --W: calc(var(--w) * var(--sw) * 1rem);
+  --CW: calc(var(--H) * var(--cr));   /* cover width = book depth */
+  position: relative;
+  flex: none;
+  width: calc(var(--W) + 2px);
   height: var(--row-h);
-  padding: 0 1px var(--plank);
+  perspective: 900px;
+  /* Eye level just below the book tops: tops stay hidden until a book
+     tips forward */
+  perspective-origin: 50% 35%;
+}
+.slot.open { width: calc(var(--CW) + 1.25rem); }
+
+/* The invisible button over each book handles clicks and keyboard focus */
+.hit {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.hit:focus { outline: none; }
+.hit:focus-visible + .book .spine-face,
+.hit:focus-visible + .book .cover-face {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-/* A spine: vertical text reading top to bottom, title then surname */
-.spine {
-  position: relative;
+.book {
+  position: absolute;
+  left: 50%;
+  bottom: var(--plank);
+  width: var(--W);
+  height: var(--H);
+  transform-style: preserve-3d;
+  /* The spine sits at z = 0 (flush with the shelf front) and the book
+     extends backwards; it pivots about the middle of its depth */
+  transform-origin: 50% 100% calc(var(--CW) / -2);
+  transform: translateX(-50%);
+}
+
+.face {
+  position: absolute;
+  backface-visibility: hidden;
+}
+
+/* Spine: vertical text reading top to bottom, title then surname */
+.spine-face {
+  inset: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 0.6rem;
-  width: var(--w);
-  height: var(--h);
   padding: 0.95rem 0.3rem 0.8rem;
   overflow: hidden;
-  border: 0;
   border-radius: 2px 2px 1px 1px;
   background: var(--cloth);
   color: var(--ink-on);
-  font: inherit;
   writing-mode: vertical-rl;
-  /* Lay every glyph sideways like ordinary horizontal text, so
-     apostrophes and dashes render correctly on the spine */
+  /* Lay glyphs sideways like ordinary text so apostrophes render well */
   text-orientation: sideways;
-  text-align: start;
-  cursor: pointer;
   box-shadow:
     inset 2px 0 0 rgba(255, 255, 255, 0.08),
     inset -3px 0 0 rgba(0, 0, 0, 0.2);
-  transform-origin: bottom left;
 }
 
 /* Two thin bands near the head and tail, like a cloth binding */
-.spine::before,
-.spine::after {
+.spine-face::before,
+.spine-face::after {
   content: "";
   position: absolute;
   left: 0.25rem;
@@ -81,11 +122,12 @@
   background: currentColor;
   opacity: 0.35;
 }
-.spine::before { top: 0.5rem; }
-.spine::after { bottom: 0.45rem; }
+.spine-face::before { top: 0.5rem; }
+.spine-face::after { bottom: 0.45rem; }
 
 .spine-title {
   min-block-size: 0;
+  max-block-size: 100%;
   overflow: hidden;
   font-size: 0.78rem;
   font-weight: 600;
@@ -102,132 +144,108 @@
   opacity: 0.8;
 }
 
-.spine:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+/* Page edges on top, bound by the cloth on three sides */
+.top-face {
+  left: 0;
+  top: calc(var(--CW) / -2);
+  width: 100%;
+  height: var(--CW);
+  background: repeating-linear-gradient(90deg, #f1e9d6 0 1px, #d8cbb0 1px 2px);
+  border: 2px solid var(--cloth);
+  border-top: 0;
+  transform: translateZ(calc(var(--CW) / -2)) rotateX(90deg);
 }
 
-/* Hover: the book tips forward from the top, pivoting on its bottom edge */
-@media (hover: hover) {
-  .spine:hover {
-    transform: rotate(-5deg);
-    box-shadow:
-      inset 2px 0 0 rgba(255, 255, 255, 0.08),
-      inset -3px 0 0 rgba(0, 0, 0, 0.2),
-      5px 6px 10px rgba(0, 0, 0, 0.35);
-  }
-}
-
-/* The open book is pulled up slightly and outlined */
-.spine[aria-expanded="true"],
-.spine[aria-expanded="true"]:hover {
-  transform: translateY(-0.4rem);
-  box-shadow: 0 0 0 2px var(--accent);
-}
-
-/* The gap that opens beside the chosen spine, holding its cover */
-.cover-slot {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  width: 0;
-  height: var(--row-h);
-  padding-bottom: var(--plank);
+/* Front cover on the right-hand side of the box */
+.cover-face {
+  top: 0;
+  left: calc(50% - var(--CW) / 2);
+  width: var(--CW);
+  height: 100%;
   overflow: hidden;
-  perspective: 900px;
+  border-radius: 1px 3px 3px 1px;
+  background: var(--cloth);
+  box-shadow: inset 3px 0 0 rgba(0, 0, 0, 0.18);
+  transform: translateZ(calc(var(--CW) / -2)) rotateY(90deg) translateZ(calc(var(--W) / 2));
 }
-.cover-slot.open { width: var(--open-w); }
-
-.cover-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: var(--card-w);
-  flex: none;
-  cursor: pointer;
-  opacity: 0;
-  transform: rotateY(-80deg);
-  transform-origin: left center;
-}
-.cover-slot.open .cover-card {
-  opacity: 1;
-  transform: none;
-}
-
-.cover-card img,
-.cover-typo {
+.cover-face img {
   display: block;
-  max-width: var(--card-w);
-  max-height: calc(var(--row-h) - var(--plank) - 3.3rem);
-  border-radius: 2px;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
-.cover-card img { width: auto; height: auto; }
 
-/* Typographic cover for books without a published cover image */
-.cover-typo {
+/* Drawn cover for books without a published cover image */
+.cover-face.typo {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: calc(var(--card-w) - 0.6rem);
-  height: calc(var(--row-h) - var(--plank) - 3.3rem);
   padding: 1rem 0.8rem;
-  background: var(--cloth);
   color: var(--ink-on);
   box-shadow:
     inset 0 0 0 0.4rem var(--cloth),
-    inset 0 0 0 calc(0.4rem + 1px) currentColor,
-    0 10px 22px rgba(0, 0, 0, 0.45);
+    inset 0 0 0 calc(0.4rem + 1px) currentColor;
 }
-.cover-typo .t {
+.cover-face.typo .t {
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1.25;
 }
-.cover-typo .a {
+.cover-face.typo .a {
   font-size: 0.72rem;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   opacity: 0.85;
 }
 
-.cover-caption {
-  max-width: var(--card-w);
-  margin-top: 0.45rem;
-  overflow: hidden;
-  color: var(--muted);
-  font-size: 0.72rem;
-  line-height: 1.3;
-  text-align: center;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+/* Hover (or keyboard focus): tip the book toward the viewer from the top */
+.slot:not(.open):not(.closing):hover .book,
+.hit:focus-visible + .book {
+  transform: translateX(-50%) translateY(calc(var(--CW) * -0.113)) rotateX(-13deg);
 }
-.cover-caption b { color: var(--ink); font-weight: 600; }
+.slot:not(.open):hover .spine-face {
+  box-shadow:
+    inset 2px 0 0 rgba(255, 255, 255, 0.08),
+    inset -3px 0 0 rgba(0, 0, 0, 0.2),
+    0 10px 14px -6px rgba(0, 0, 0, 0.45);
+}
+
+/* Open: the cover faces out */
+.slot.open .book {
+  transform: translateX(-50%) rotateY(-90deg);
+}
+
+@keyframes book-open {
+  0%   { transform: translateX(-50%) translateY(calc(var(--CW) * -0.113)) rotateX(-13deg); }
+  35%  { transform: translateX(-50%) translateZ(3rem) rotateX(-8deg) rotateY(-30deg); }
+  100% { transform: translateX(-50%) rotateY(-90deg); }
+}
+@keyframes book-close {
+  0%   { transform: translateX(-50%) rotateY(-90deg); }
+  60%  { transform: translateX(-50%) translateZ(3rem) rotateX(-8deg) rotateY(-30deg); }
+  100% { transform: translateX(-50%); }
+}
 
 @media (prefers-reduced-motion: no-preference) {
-  .spine { transition: transform 0.22s ease, box-shadow 0.22s ease; }
-  .cover-slot { transition: width 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
-  .cover-card {
-    transition:
-      transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) 0.12s,
-      opacity 0.3s ease 0.12s;
-  }
+  .slot { transition: width 0.75s cubic-bezier(0.3, 0.7, 0.2, 1); }
+  .book { transition: transform 0.25s ease; }
+  .slot.open .book { animation: book-open 0.75s cubic-bezier(0.3, 0.7, 0.2, 1) both; }
+  .slot.closing .book { animation: book-close 0.6s cubic-bezier(0.3, 0.7, 0.2, 1) both; }
 }
 
 /* Phones: shorter shelves and slimmer books */
 @media (max-width: 40rem) {
   :root {
-    --row-h: 13.25rem;
-    --open-w: 9.25rem;
-    --card-w: 7.5rem;
+    --row-h: 13.75rem;
+    --s: 0.78;
+    --sw: 0.86;
   }
-  .spine {
-    width: calc(var(--w) * 0.86);
-    height: calc(var(--h) * 0.78);
+  .spine-face {
     padding: 0.75rem 0.22rem 0.6rem;
     gap: 0.45rem;
   }
   .spine-title { font-size: 0.68rem; }
   .spine-author { font-size: 0.56rem; }
+  .cover-face.typo { padding: 0.8rem 0.6rem; }
+  .cover-face.typo .t { font-size: 0.8rem; }
 }

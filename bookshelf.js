@@ -1,109 +1,72 @@
-// Bookshelf: clicking a spine opens a gap right after it on the shelf and
-// swings the book's cover in to face out. Clicking the spine or the cover
-// again, pressing Escape, or opening another book puts it back.
+// Bookshelf: each book is a 3D box (see bookshelf.css). Clicking a book
+// turns it so its cover faces out and widens its slot; clicking it again,
+// pressing Escape, or opening another book turns it back. Cover images
+// load the first time a book is hovered, focused or opened.
 (function () {
-  var spines = Array.prototype.slice.call(document.querySelectorAll('.spine'));
-  if (!spines.length) return;
+  var slots = Array.prototype.slice.call(document.querySelectorAll('.slot'));
+  if (!slots.length) return;
 
   var still = window.matchMedia('(prefers-reduced-motion: reduce)');
-  var current = null; // { spine, slot }
-  var count = 0;
+  var current = null;
 
-  function build(spine) {
-    var slot = document.createElement('li');
-    slot.className = 'cover-slot';
-    slot.id = 'cover-' + (++count);
-
-    var card = document.createElement('div');
-    card.className = 'cover-card';
-    card.setAttribute('role', 'button');
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-label', 'Close ' + spine.dataset.title);
-
-    var cover = spine.dataset.cover;
-    if (cover) {
-      var img = document.createElement('img');
-      img.src = cover;
-      img.alt = 'Cover of ' + spine.dataset.title;
-      img.decoding = 'async';
-      card.appendChild(img);
-    } else {
-      // No published cover: draw a simple one in the spine's cloth colour
-      var typo = document.createElement('div');
-      typo.className = 'cover-typo';
-      typo.style.setProperty('--cloth', spine.style.getPropertyValue('--cloth'));
-      typo.style.setProperty('--ink-on', spine.style.getPropertyValue('--ink-on'));
-      var t = document.createElement('span');
-      t.className = 't';
-      t.textContent = spine.dataset.title;
-      var a = document.createElement('span');
-      a.className = 'a';
-      a.textContent = spine.dataset.author;
-      typo.appendChild(t);
-      typo.appendChild(a);
-      card.appendChild(typo);
-    }
-
-    var cap = document.createElement('p');
-    cap.className = 'cover-caption';
-    var b = document.createElement('b');
-    b.textContent = spine.dataset.title;
-    cap.appendChild(b);
-    cap.appendChild(document.createTextNode(' · ' + spine.dataset.author));
-    card.appendChild(cap);
-
-    slot.appendChild(card);
-    card.addEventListener('click', function () { close(true); });
-    card.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); close(true); }
-    });
-    return slot;
+  function load(slot) {
+    var img = slot.querySelector('img[data-src]');
+    if (img && !img.getAttribute('src')) img.src = img.dataset.src;
   }
 
-  function open(spine) {
-    var slot = build(spine);
-    spine.parentNode.parentNode.insertBefore(slot, spine.parentNode.nextSibling);
-    spine.setAttribute('aria-expanded', 'true');
-    spine.setAttribute('aria-controls', slot.id);
-    current = { spine: spine, slot: slot };
-    // Let the empty gap render first so its width can animate open
-    slot.getBoundingClientRect();
+  function open(slot) {
+    load(slot);
+    slot.classList.remove('closing');
     slot.classList.add('open');
-    var wait = still.matches ? 0 : 520;
+    slot.querySelector('.hit').setAttribute('aria-expanded', 'true');
+    current = slot;
     setTimeout(function () {
-      if (current && current.slot === slot) {
-        slot.scrollIntoView({ block: 'nearest', behavior: still.matches ? 'auto' : 'smooth' });
+      if (current === slot) {
+        slot.scrollIntoView({ block: 'nearest', inline: 'nearest',
+                              behavior: still.matches ? 'auto' : 'smooth' });
       }
-    }, wait);
+    }, still.matches ? 0 : 780);
   }
 
-  function close(refocus) {
-    if (!current) return;
-    var spine = current.spine;
-    var slot = current.slot;
-    current = null;
-    spine.setAttribute('aria-expanded', 'false');
-    spine.removeAttribute('aria-controls');
-    if (refocus) spine.focus();
+  function close(slot) {
+    if (!slot) return;
+    if (current === slot) current = null;
     slot.classList.remove('open');
-    if (still.matches) { slot.remove(); return; }
+    slot.querySelector('.hit').setAttribute('aria-expanded', 'false');
+    if (still.matches) return;
+    slot.classList.add('closing');
+    var book = slot.querySelector('.book');
     var done = false;
-    function finish() { if (!done) { done = true; slot.remove(); } }
-    slot.addEventListener('transitionend', function (e) {
-      if (e.target === slot && e.propertyName === 'width') finish();
-    });
-    setTimeout(finish, 700);
+    function finish() {
+      if (done) return;
+      done = true;
+      slot.classList.remove('closing');
+      book.removeEventListener('animationend', onEnd);
+    }
+    function onEnd(e) { if (e.animationName === 'book-close') finish(); }
+    book.addEventListener('animationend', onEnd);
+    setTimeout(finish, 900);
   }
 
-  spines.forEach(function (spine) {
-    spine.addEventListener('click', function () {
-      var same = current && current.spine === spine;
-      close(false);
-      if (!same) open(spine);
+  slots.forEach(function (slot) {
+    var hit = slot.querySelector('.hit');
+    hit.addEventListener('pointerenter', function () { load(slot); });
+    hit.addEventListener('focus', function () { load(slot); });
+    hit.addEventListener('click', function () {
+      if (current === slot) {
+        close(slot);
+      } else {
+        close(current);
+        open(slot);
+      }
     });
   });
 
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && current) close(true);
+    if (e.key === 'Escape' && current) {
+      var slot = current;
+      close(slot);
+      slot.querySelector('.hit').focus();
+    }
   });
 })();
