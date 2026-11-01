@@ -1,7 +1,8 @@
 // Bookshelf: each book is a 3D box (see bookshelf.css). Clicking a book
 // turns it so its cover faces out (title and author fade in above the book)
 // and widens its slot; clicking it again,
-// pressing Escape, or opening another book turns it back. Cover images
+// pressing Escape, clicking anywhere off the books, or opening another book
+// turns it back. Cover images
 // load the first time a book is hovered, focused or opened.
 (function () {
   var slots = Array.prototype.slice.call(document.querySelectorAll('.slot'));
@@ -203,6 +204,11 @@
         open(slot, current);
       }
     });
+  });
+
+  // A click anywhere that isn't a book puts the open book back
+  document.addEventListener('click', function (e) {
+    if (current && !(e.target.closest && e.target.closest('.hit'))) close(current);
   });
 
   document.addEventListener('keydown', function (e) {
