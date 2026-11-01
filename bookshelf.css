@@ -83,7 +83,7 @@
   /* The spine sits at z = 0 (flush with the shelf front) and the book
      extends backwards; it pivots about the middle of its depth */
   transform-origin: 50% 100% calc(var(--CW) / -2);
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(0deg);
 }
 
 .face {
@@ -198,10 +198,15 @@
   opacity: 0.85;
 }
 
-/* Hover (or keyboard focus): tip the book toward the viewer from the top */
+/* Every state below uses the same transform list
+     translateX  translateY  translateZ  rotateX  rotateY
+   so the browser interpolates each value on its own, smoothly. */
+
+/* Hover (or keyboard focus): tip the book toward the viewer from the top.
+   The translateY lifts it so it pivots on its front-bottom edge. */
 .slot:not(.open):not(.closing):hover .book,
 .hit:focus-visible + .book {
-  transform: translateX(-50%) translateY(calc(var(--CW) * -0.113)) rotateX(-13deg);
+  transform: translateX(-50%) translateY(calc(var(--CW) * -0.19)) translateZ(0) rotateX(-22deg) rotateY(0deg);
 }
 .slot:not(.open):hover .spine-face {
   box-shadow:
@@ -212,25 +217,44 @@
 
 /* Open: the cover faces out */
 .slot.open .book {
-  transform: translateX(-50%) rotateY(-90deg);
+  transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(-90deg);
 }
 
+/* The turn has a midpoint (book lifted toward the viewer). Each half has
+   its own easing: the first half speeds up and the second slows down,
+   with matching speeds at the midpoint, so the motion never stalls there. */
 @keyframes book-open {
-  0%   { transform: translateX(-50%) translateY(calc(var(--CW) * -0.113)) rotateX(-13deg); }
-  35%  { transform: translateX(-50%) translateZ(3rem) rotateX(-8deg) rotateY(-30deg); }
-  100% { transform: translateX(-50%) rotateY(-90deg); }
+  0% {
+    transform: translateX(-50%) translateY(calc(var(--CW) * -0.19)) translateZ(0) rotateX(-22deg) rotateY(0deg);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.8, 0.6);
+  }
+  35% {
+    transform: translateX(-50%) translateY(calc(var(--CW) * -0.06)) translateZ(3rem) rotateX(-10deg) rotateY(-30deg);
+    animation-timing-function: cubic-bezier(0.2, 0.4, 0.2, 1);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(-90deg);
+  }
 }
 @keyframes book-close {
-  0%   { transform: translateX(-50%) rotateY(-90deg); }
-  60%  { transform: translateX(-50%) translateZ(3rem) rotateX(-8deg) rotateY(-30deg); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(-90deg);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.8, 0.6);
+  }
+  60% {
+    transform: translateX(-50%) translateY(calc(var(--CW) * -0.06)) translateZ(3rem) rotateX(-10deg) rotateY(-30deg);
+    animation-timing-function: cubic-bezier(0.2, 0.4, 0.2, 1);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(0deg);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .slot { transition: width 0.75s cubic-bezier(0.3, 0.7, 0.2, 1); }
-  .book { transition: transform 0.25s ease; }
-  .slot.open .book { animation: book-open 0.75s cubic-bezier(0.3, 0.7, 0.2, 1) both; }
-  .slot.closing .book { animation: book-close 0.6s cubic-bezier(0.3, 0.7, 0.2, 1) both; }
+  .slot { transition: width 0.8s cubic-bezier(0.3, 0.7, 0.2, 1); }
+  .book { transition: transform 0.3s ease; }
+  .slot.open .book { animation: book-open 0.8s linear both; }
+  .slot.closing .book { animation: book-close 0.65s linear both; }
 }
 
 /* Phones: shorter shelves and slimmer books */
