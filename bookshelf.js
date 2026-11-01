@@ -8,6 +8,7 @@
   if (!slots.length) return;
 
   var still = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var canHover = window.matchMedia('(hover: hover)');
   var current = null;
 
   // Show every word of every spine title: start from the stylesheet's size
@@ -166,13 +167,25 @@
     slot.querySelector('.hit').setAttribute('aria-expanded', 'false');
     if (still.matches) return;
     slot.classList.add('closing');
+    // Closing under the pointer ends in the hover tilt (book-close-tilt)
+    if (canHover.matches && slot.matches(':hover')) slot.classList.add('to-tilt');
     var book = slot.querySelector('.book');
     var done = false;
     function finish() {
       if (done) return;
       done = true;
-      slot.classList.remove('closing');
       book.removeEventListener('animationend', onEnd);
+      // Hand the book's final pose to the plain hover transition: hold it
+      // inline, drop the turn, then let go, so if the pointer came or went
+      // during the close the book eases to the right pose instead of
+      // snapping (and nothing moves if it already matches).
+      var pose = getComputedStyle(book).transform;
+      book.style.transition = 'none';
+      book.style.transform = pose;
+      slot.classList.remove('closing', 'to-tilt');
+      void book.offsetWidth;
+      book.style.transition = '';
+      book.style.transform = '';
     }
     function onEnd(e) { if (e.animationName.indexOf('book-close') === 0) finish(); }
     book.addEventListener('animationend', onEnd);
