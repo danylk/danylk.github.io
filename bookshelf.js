@@ -126,9 +126,7 @@
     void document.body.offsetWidth;   // apply the starting offsets before gliding
     els.forEach(function (el) {
       if (!el.style.transform) return;
-      var t = 'transform ' + glide;
-      if (el.classList.contains('slot')) t += ', --tip 0.3s ease, --lift 0.3s ease';
-      el.style.transition = t;
+      el.style.transition = 'transform ' + glide;
       el.style.transform = '';
       el.addEventListener('transitionend', function end(e) {
         if (e.target !== el || e.propertyName !== 'transform') return;

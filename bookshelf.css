@@ -72,15 +72,15 @@ html { overflow-anchor: none; }
 }
 .slot:has(.hit:focus-visible) { z-index: 2; }
 
-/* The hover tilt lives in two variables, registered so they animate
-   (rotateX by --tip, lift by --lift times the book depth). The resting
-   pose and both ends of the turn (book-open, book-close) read them, so a
-   book always turns from, and returns to, wherever the tilt is right now,
-   including when the pointer arrives or leaves mid-turn.
+/* The hover tilt lives in two variables (rotateX by --tip, lift by --lift
+   times the book depth). The resting pose and both ends of the turn
+   (book-open, book-close) read them, so a book turns from, and returns
+   to, the tilt when the pointer is on it. The tilt itself animates as a
+   plain transform transition on .book. (Animating the variables instead,
+   via @property, made books jump up or down for a moment on hover in
+   desktop Safari; the user's test on 2026-11-01 traced it to that.)
    Tilt only on devices that really hover: touch screens keep :hover stuck
    on the last tapped book, which left a put-away book tilted. */
-@property --tip  { syntax: "<angle>";  inherits: true; initial-value: 0deg; }
-@property --lift { syntax: "<number>"; inherits: true; initial-value: 0; }
 .slot { --tip: 0deg; --lift: 0; }
 @media (hover: hover) {
   .slot:hover { --tip: -22deg; --lift: -0.19; }
@@ -487,11 +487,7 @@ html { overflow-anchor: none; }
    before the turn ends at 0.8s. When a book is put back the others wait
    0.26s, so they don't slide into it while it is still turned. */
 @media (prefers-reduced-motion: no-preference) {
-  .slot {
-    transition:
-      --tip 0.3s ease,
-      --lift 0.3s ease;
-  }
+  .book { transition: transform 0.3s ease; }
   .slot.open .book { animation: book-open 0.8s linear both; }
   .slot.closing .book { animation: book-close 0.65s linear both; }
 }
