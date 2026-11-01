@@ -54,8 +54,8 @@
     slots.forEach(function (slot) { near.observe(slot); });
   }
 
-  // Once the opened slot has finished widening (and so sits in its final
-  // row), show the caption above the book, shifted sideways (--dx) to stay
+  // Once the opened book has glided into its final place (see flip), show
+  // the caption above the book, shifted sideways (--dx) to stay
   // inside the shelf, then scroll only if the caption or cover is partly
   // off screen. This runs at 0.6s, before the turn ends at 0.8s, so the
   // turn's last frames have no layout or scrolling to compete with.
@@ -79,27 +79,90 @@
     }
   }
 
-  function open(slot) {
+  // Opening or closing a book changes its slot's width at once, which can
+  // move books along the row, onto the next row, and shift the sections
+  // below. flip() measures everything that can move, lets the change
+  // happen, then glides each item from where it was to where it is now
+  // (FLIP), so nothing jumps. The toggled books are measured by their
+  // centre, so a book stays put while its slot widens around it.
+  var OPEN_GLIDE = '0.6s cubic-bezier(0.3, 0.7, 0.2, 1)';
+  var CLOSE_GLIDE = '0.45s cubic-bezier(0.45, 0, 0.25, 1) 0.26s';
+
+  function movers(toggled) {
+    var list = [];
+    toggled.forEach(function (slot) {
+      Array.prototype.forEach.call(slot.parentNode.children, function (el) { list.push(el); });
+      for (var n = slot.closest('section').nextElementSibling; n; n = n.nextElementSibling) list.push(n);
+    });
+    return list.filter(function (el, i) { return list.indexOf(el) === i; });
+  }
+
+  function flip(toggled, change, glide) {
+    if (still.matches) { change(); return; }
+    var els = movers(toggled);
+    function at(el) {
+      var r = el.getBoundingClientRect();
+      return { x: toggled.indexOf(el) >= 0 ? r.left + r.width / 2 : r.left, y: r.top };
+    }
+    var first = els.map(at);
+    els.forEach(function (el) { el.style.transition = 'none'; el.style.transform = ''; });
+    change();
+    var delta = els.map(function (el, i) {
+      var last = at(el);
+      return { x: first[i].x - last.x, y: first[i].y - last.y };
+    });
+    // A book inside a section that moves as a whole moves with it already
+    els.forEach(function (el, i) {
+      for (var p = el.parentNode; p && p !== document; p = p.parentNode) {
+        var j = els.indexOf(p);
+        if (j >= 0) { delta[i].x -= delta[j].x; delta[i].y -= delta[j].y; break; }
+      }
+    });
+    els.forEach(function (el, i) {
+      var d = delta[i];
+      if (Math.abs(d.x) < 0.5 && Math.abs(d.y) < 0.5) { el.style.transition = ''; return; }
+      el.style.transform = 'translate(' + d.x.toFixed(1) + 'px, ' + d.y.toFixed(1) + 'px)';
+    });
+    void document.body.offsetWidth;   // apply the starting offsets before gliding
+    els.forEach(function (el) {
+      if (!el.style.transform) return;
+      var t = 'transform ' + glide;
+      if (el.classList.contains('slot')) t += ', --tip 0.3s ease, --lift 0.3s ease';
+      el.style.transition = t;
+      el.style.transform = '';
+      el.addEventListener('transitionend', function end(e) {
+        if (e.target !== el || e.propertyName !== 'transform') return;
+        el.style.transition = '';
+        el.removeEventListener('transitionend', end);
+      });
+    });
+  }
+
+  function markOpen(slot) {
     load(slot);
     slot.classList.remove('closing');
     slot.classList.add('open');
     slot.querySelector('.hit').setAttribute('aria-expanded', 'true');
     current = slot;
-    var done = false;
-    function go() {
-      if (done) return;
-      done = true;
-      slot.removeEventListener('transitionend', onEnd);
-      if (current === slot) settle(slot);
+    // Caption and any scroll once the glide is done (0.6s), before the
+    // turn ends (0.8s)
+    setTimeout(function () { if (current === slot) settle(slot); }, still.matches ? 0 : 620);
+  }
+
+  function open(slot, closing) {
+    if (closing) {
+      flip([closing, slot], function () { markClosed(closing); markOpen(slot); }, OPEN_GLIDE);
+    } else {
+      flip([slot], function () { markOpen(slot); }, OPEN_GLIDE);
     }
-    function onEnd(e) { if (e.target === slot && e.propertyName === 'width') go(); }
-    if (still.matches) { go(); return; }
-    slot.addEventListener('transitionend', onEnd);
-    setTimeout(go, 650);
   }
 
   function close(slot) {
     if (!slot) return;
+    flip([slot], function () { markClosed(slot); }, CLOSE_GLIDE);
+  }
+
+  function markClosed(slot) {
     if (current === slot) current = null;
     slot.classList.remove('open', 'captioned');
     slot.querySelector('.hit').setAttribute('aria-expanded', 'false');
@@ -126,8 +189,7 @@
       if (current === slot) {
         close(slot);
       } else {
-        close(current);
-        open(slot);
+        open(slot, current);
       }
     });
   });
