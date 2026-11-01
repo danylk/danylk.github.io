@@ -62,12 +62,13 @@ html { overflow-anchor: none; }
   perspective-origin: 50% 35%;
 }
 .slot.open { width: calc(var(--CW) + 1.25rem); }
-/* Paint order, highest first: the book being opened (its caption floats
-   over the row above), a book being put back, then a hovered or focused
-   book. The hover rules skip open and closing books: being as specific
-   and later in the file, they used to override these and let a closing
-   book cover the one just opened next to it. */
-.slot.open { z-index: 4; }
+/* Open and closing books draw above the rest (an open book's caption
+   floats over the row above). Between two of them, when one book is put
+   back as the next is opened, the one on the right is in front: equal
+   z-index, so page order decides. The hover rules below skip open and
+   closing books; being as specific and later in the file, they used to
+   override this and drop the just-opened (hovered) book underneath. */
+.slot.open,
 .slot.closing { z-index: 3; }
 /* A tipped book's top is wider than its slot; keep it above the books
    next to it (later slots would otherwise paint over it) */
