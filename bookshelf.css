@@ -61,6 +61,12 @@
 /* The opened book's caption floats over the row above */
 .slot.open,
 .slot.closing { z-index: 3; }
+/* A tipped book's top is wider than its slot; keep it above the books
+   next to it (later slots would otherwise paint over it) */
+@media (hover: hover) {
+  .slot:hover { z-index: 2; }
+}
+.slot:has(.hit:focus-visible) { z-index: 2; }
 
 /* The hover tilt lives in two variables, registered so they animate
    (rotateX by --tip, lift by --lift times the book depth). The resting
@@ -100,7 +106,7 @@
 .book {
   --board: 0.14rem;     /* board / spine thickness (see .top-face) */
   --recess: 0.24rem;    /* how far the pages sit below the boards */
-  --overhang: 0.16rem;  /* how far the boards reach past the pages at the fore-edge */
+  --overhang: 0.32rem;  /* how far the boards reach past the pages at the fore-edge */
   position: absolute;
   left: 50%;
   bottom: var(--plank);
@@ -225,9 +231,10 @@
 }
 
 /* Back cover on the left-hand side of the box. It is never seen from
-   outside, but with the pages sunk below the boards its inner side shows
-   above them when the book is seen at a low angle mid-turn; without it
-   the background showed through there. */
+   outside; only its inner side shows, as the strip of board above the
+   sunken pages when the book is seen at a low angle mid-turn. On a real
+   hardcover that strip is lined with endpaper, so it is paper-coloured
+   (dark cloth there made the top look hollow). */
 .book::before {
   content: "";
   position: absolute;
@@ -235,8 +242,7 @@
   left: calc(50% - var(--CW) / 2);
   width: var(--CW);
   height: 100%;
-  background: var(--cloth);
-  box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.25);
+  background: #e6ddc8;
   transform: translateZ(calc(var(--CW) / -2)) rotateY(-90deg) translateZ(calc(var(--W) / 2));
 }
 /* The pages' fore-edge at the back of the box. It stops at the sunken
