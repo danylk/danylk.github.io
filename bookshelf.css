@@ -104,7 +104,7 @@
 }
 
 .book {
-  --board: 0.18rem;     /* board / spine thickness (see .top-face) */
+  --board: 0.22rem;     /* board / spine thickness (see .top-face) */
   --recess: 0.2rem;     /* how far the pages sit below the boards */
   --overhang: 0.32rem;  /* how far the boards reach past the pages at the fore-edge */
   position: absolute;
@@ -230,22 +230,25 @@
   border-radius: 1px;
 }
 
-/* Back cover on the left-hand side of the box. It is never seen from
-   outside; only its inner side shows, as the strip of board above the
-   sunken pages when the book is seen at a low angle mid-turn. It is the
-   cloth colour, barely shaded, so it reads together with the board's top
-   edge as one solid board resting against the pages (a paper or dark
-   strip there made the board look like a thin shell: hollow). */
+/* Inner face of the back cover board: it stands where the board meets
+   the pages, one board-thickness in from the box's left side, directly
+   under the inner edge of the board's top edge (.top-face::after). The
+   top edge and this face make one solid slab resting against the pages,
+   seen above them when the book is viewed at a low angle mid-turn. (At
+   the box's outer side it left a channel under the top edge, which made
+   the board look hollow.) */
 .book::before {
   content: "";
   position: absolute;
-  top: 0;
+  /* 1px taller at the top so it tucks under the board's top edge: where
+     they only met along a line, a light seam showed through */
+  top: -1px;
   left: calc(50% - var(--CW) / 2);
   width: var(--CW);
-  height: 100%;
+  height: calc(100% + 1px);
   background: var(--cloth);
   box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.1);
-  transform: translateZ(calc(var(--CW) / -2)) rotateY(-90deg) translateZ(calc(var(--W) / 2));
+  transform: translateZ(calc(var(--CW) / -2)) rotateY(-90deg) translateZ(calc(var(--W) / 2 - var(--board)));
 }
 /* The pages' fore-edge at the back of the box. It stops at the sunken
    page level, so the top stays open on that side and is bound only by
