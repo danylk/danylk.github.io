@@ -52,7 +52,11 @@ a {
   text-underline-offset: 0.2em;
 }
 
-a:hover { text-decoration-thickness: 2px; }
+/* Hover styles only where a pointer really hovers: iPhone Safari keeps
+   :hover on the last tapped element until something else is tapped. */
+@media (hover: hover) {
+  a:hover { text-decoration-thickness: 2px; }
+}
 
 a:focus-visible {
   outline: 2px solid var(--accent);
@@ -88,9 +92,15 @@ a:focus-visible {
 
 .theme-toggle[hidden] { display: none; }
 
-.theme-toggle:hover {
-  color: var(--accent);
-  border-color: var(--accent);
+/* No grey/blue tap flash on phones */
+.theme-toggle,
+.fold { -webkit-tap-highlight-color: transparent; }
+
+@media (hover: hover) {
+  .theme-toggle:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
 }
 
 .theme-toggle:focus-visible {
@@ -168,7 +178,9 @@ a:focus-visible {
   text-decoration: none;
 }
 
-.back:hover { color: var(--accent); }
+@media (hover: hover) {
+  .back:hover { color: var(--accent); }
+}
 
 .subhead .statement { max-width: 38rem; }
 
@@ -243,7 +255,9 @@ a:focus-visible {
   color: var(--muted);
 }
 
-.fold:hover .chevron { color: var(--accent); }
+@media (hover: hover) {
+  .fold:hover .chevron { color: var(--accent); }
+}
 
 .fold[aria-expanded="true"] .chevron { transform: rotate(90deg); }
 
