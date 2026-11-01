@@ -204,6 +204,9 @@ a:focus-visible {
 /* Courses are names only, so their rows sit close together */
 .row.course + .row.course { margin-top: 0.6rem; }
 
+/* Books are a title and an author, so their rows sit a little closer */
+.row.book + .row.book { margin-top: 1rem; }
+
 .course .item h3 { font-weight: 500; }
 
 .course .item .meta { margin-bottom: 0; }
