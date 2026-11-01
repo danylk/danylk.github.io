@@ -52,6 +52,13 @@
   /* Eye level just below the book tops: tops stay hidden until a book
      tips forward */
   perspective-origin: 50% 35%;
+  /* Pose the turn starts from (see book-open): the hover tilt where there
+     is hover, flat on touch screens, so a tap doesn't jump the book. */
+  --lift0: 0;
+  --tip0: 0deg;
+}
+@media (hover: hover) {
+  .slot { --lift0: -0.19; --tip0: -22deg; }
 }
 .slot.open { width: calc(var(--CW) + 1.25rem); }
 
@@ -84,6 +91,9 @@
      extends backwards; it pivots about the middle of its depth */
   transform-origin: 50% 100% calc(var(--CW) / -2);
   transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(0deg);
+  /* Keep each book on its own layer so it isn't re-rasterised (a visible
+     flicker on some phones) when the turn animation ends */
+  will-change: transform;
 }
 
 .face {
@@ -184,6 +194,42 @@
   object-fit: cover;
 }
 
+/* Title and author across the top of an opened book's cover; it fades in
+   once the cover has turned to face out */
+.cover-caption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.55rem 0.6rem 1.5rem;
+  background: linear-gradient(to bottom,
+    rgba(14, 12, 10, 0.88) 0,
+    rgba(14, 12, 10, 0.74) 60%,
+    rgba(14, 12, 10, 0) 100%);
+  color: #f3efe6;
+  opacity: 0;
+  pointer-events: none;
+}
+.slot.open .cover-caption { opacity: 1; }
+.cc-t {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.22;
+}
+.cc-a {
+  font-size: 0.66rem;
+  letter-spacing: 0.03em;
+  line-height: 1.25;
+  opacity: 0.88;
+}
+
 /* Drawn cover for books without a published cover image */
 .cover-face.typo {
   display: flex;
@@ -221,16 +267,22 @@
    so the browser interpolates each value on its own, smoothly. */
 
 /* Hover (or keyboard focus): tip the book toward the viewer from the top.
-   The translateY lifts it so it pivots on its front-bottom edge. */
-.slot:not(.open):not(.closing):hover .book,
+   The translateY lifts it so it pivots on its front-bottom edge. Only on
+   devices that really hover: touch screens keep :hover stuck on the last
+   tapped book, which left a put-away book tilted. */
 .hit:focus-visible + .book {
   transform: translateX(-50%) translateY(calc(var(--CW) * -0.19)) translateZ(0) rotateX(-22deg) rotateY(0deg);
 }
-.slot:not(.open):hover .spine-face {
-  box-shadow:
-    inset 2px 0 0 rgba(255, 255, 255, 0.08),
-    inset -3px 0 0 rgba(0, 0, 0, 0.2),
-    0 10px 14px -6px rgba(0, 0, 0, 0.45);
+@media (hover: hover) {
+  .slot:not(.open):not(.closing):hover .book {
+    transform: translateX(-50%) translateY(calc(var(--CW) * -0.19)) translateZ(0) rotateX(-22deg) rotateY(0deg);
+  }
+  .slot:not(.open):hover .spine-face {
+    box-shadow:
+      inset 2px 0 0 rgba(255, 255, 255, 0.08),
+      inset -3px 0 0 rgba(0, 0, 0, 0.2),
+      0 10px 14px -6px rgba(0, 0, 0, 0.45);
+  }
 }
 
 /* Open: the cover faces out */
@@ -243,7 +295,7 @@
    with matching speeds at the midpoint, so the motion never stalls there. */
 @keyframes book-open {
   0% {
-    transform: translateX(-50%) translateY(calc(var(--CW) * -0.19)) translateZ(0) rotateX(-22deg) rotateY(0deg);
+    transform: translateX(-50%) translateY(calc(var(--CW) * var(--lift0))) translateZ(0) rotateX(var(--tip0)) rotateY(0deg);
     animation-timing-function: cubic-bezier(0.4, 0, 0.8, 0.6);
   }
   35% {
@@ -273,6 +325,8 @@
   .book { transition: transform 0.3s ease; }
   .slot.open .book { animation: book-open 0.8s linear both; }
   .slot.closing .book { animation: book-close 0.65s linear both; }
+  .cover-caption { transition: opacity 0.15s ease; }
+  .slot.open .cover-caption { transition: opacity 0.35s ease 0.55s; }
 }
 
 /* Phones: shorter shelves and slimmer books */
@@ -290,4 +344,7 @@
   .spine-author { font-size: 0.56rem; }
   .cover-face.typo { padding: 0.8rem 0.6rem; }
   .cover-face.typo .t { font-size: 0.8rem; }
+  .cover-caption { padding: 0.4rem 0.45rem 1.1rem; gap: 0.15rem; }
+  .cc-t { font-size: 0.66rem; }
+  .cc-a { font-size: 0.56rem; }
 }

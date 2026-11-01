@@ -1,5 +1,6 @@
 // Bookshelf: each book is a 3D box (see bookshelf.css). Clicking a book
-// turns it so its cover faces out and widens its slot; clicking it again,
+// turns it so its cover faces out (title and author fade in across the top
+// of the cover) and widens its slot; clicking it again,
 // pressing Escape, or opening another book turns it back. Cover images
 // load the first time a book is hovered, focused or opened.
 (function () {
@@ -38,6 +39,33 @@
     if (img && !img.getAttribute('src')) img.src = img.dataset.src;
   }
 
+  // Touch screens have no hover to load a cover ahead of the tap, so a
+  // cover could arrive mid-turn and pop in. Load covers of books that come
+  // near the screen instead.
+  if (window.matchMedia('(hover: none)').matches && 'IntersectionObserver' in window) {
+    var near = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          load(e.target);
+          near.unobserve(e.target);
+        }
+      });
+    }, { rootMargin: '300px 0px' });
+    slots.forEach(function (slot) { near.observe(slot); });
+  }
+
+  // After the turn, scroll only if the cover ended up partly off screen
+  // (for example when widening the slot moved the book to the next row).
+  function reveal(slot) {
+    var r = slot.querySelector('.cover-face').getBoundingClientRect();
+    var vh = window.innerHeight, pad = 12, dy = 0;
+    if (r.top < pad) dy = r.top - pad;
+    else if (r.bottom > vh - pad) dy = Math.min(r.bottom - vh + pad, r.top - pad);
+    if (Math.abs(dy) >= 1) {
+      window.scrollBy({ top: dy, behavior: still.matches ? 'auto' : 'smooth' });
+    }
+  }
+
   function open(slot) {
     load(slot);
     slot.classList.remove('closing');
@@ -45,10 +73,7 @@
     slot.querySelector('.hit').setAttribute('aria-expanded', 'true');
     current = slot;
     setTimeout(function () {
-      if (current === slot) {
-        slot.scrollIntoView({ block: 'nearest', inline: 'nearest',
-                              behavior: still.matches ? 'auto' : 'smooth' });
-      }
+      if (current === slot) reveal(slot);
     }, still.matches ? 0 : 780);
   }
 
