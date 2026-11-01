@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Safari Hover Test</title>
+<style>
+/* One column of labelled test shelves; the site's own bookshelf CSS below. */
+:root {
+  --paper: #F3EEE4; --ink: #1E1A15; --muted: #6E655A; --rule: #DCD2C2; --accent: #0E6B5C;
+  --sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #151718; --ink: #E7E9E6; --muted: #9AA2A8; --rule: #2D3133; --accent: #5FC4AE; color-scheme: dark; } }
+:root[data-theme="dark"] { --paper: #151718; --ink: #E7E9E6; --muted: #9AA2A8; --rule: #2D3133; --accent: #5FC4AE; color-scheme: dark; }
+body { background: var(--paper); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 46rem; margin: 0 auto; padding-block: 2rem 4rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1 { font-size: 1.6rem; font-weight: 600; margin: 0 0 0.4rem; text-wrap: balance; }
+.intro { color: var(--muted); max-width: 38rem; margin: 0 0 2rem; }
+.intro b { color: var(--ink); font-weight: 600; }
+.variant { border-top: 1px solid var(--rule); padding-top: 1rem; margin-top: 1.5rem; }
+.label h2 { font-size: 1rem; margin: 0; display: flex; gap: 0.5rem; align-items: baseline; }
+.label p { margin: 0.15rem 0 0.5rem; color: var(--muted); font-size: 0.9rem; }
+.tag { display: inline-block; min-width: 1.6rem; text-align: center; border: 1px solid var(--rule);
+  border-radius: 4px; font-variant-numeric: tabular-nums; letter-spacing: 0.04em; }
+.hit { pointer-events: none; }
+/* Bookshelf --------------------------------------------------------
+   Each book is a small 3D box standing on a shelf:
+     spine-face  the front (what you see on the shelf)
+     top-face    the page edges on top
+     cover-face  the front cover, on the box's right-hand side
+   Hover tips the box toward the viewer from the top, showing the page
+   edges. Clicking (bookshelf.js adds .open) turns the box a quarter turn
+   so the cover faces out, as if pulled off the shelf and turned around;
+   its slot widens to fit, pushing the neighbouring books apart.
+   Every shelf row is exactly --row-h tall so the plank background, which
+   repeats once per row, lines up with the books. */
+
+:root {
+  --plank-top:  #4a3b2c;
+  --plank-edge: #2a2119;
+  --row-h: 17.5rem;
+  --plank: 0.65rem;
+  --s: 1;     /* book height scale */
+  --sw: 1;    /* spine width scale */
+}
+
+:root[data-theme="light"] {
+  --plank-top:  #8a6544;
+  --plank-edge: #5b412c;
+}
+
+.shelf-block .rows { min-width: 0; }
+
+.shelf {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 0 0.35rem;
+  list-style: none;
+  /* Hidden captions of books near the right end would otherwise widen the
+     page on phones; shown ones are kept inside the shelf by bookshelf.js.
+     Vertical overflow stays visible so captions can float above a row. */
+  overflow-x: clip;
+  background:
+    linear-gradient(to top,
+      var(--plank-edge) 0 3px,
+      var(--plank-top) 3px var(--plank),
+      transparent var(--plank))
+    0 0 / 100% var(--row-h) repeat-y;
+}
+
+.slot {
+  --H: calc(var(--h) * var(--s) * 1rem);
+  --W: calc(var(--w) * var(--sw) * 1rem);
+  --CW: calc(var(--H) * var(--cr));   /* cover width = book depth */
+  position: relative;
+  flex: none;
+  width: calc(var(--W) + 2px);
+  height: var(--row-h);
+  perspective: 900px;
+  /* Eye level just below the book tops: tops stay hidden until a book
+     tips forward */
+  perspective-origin: 50% 35%;
+}
+.slot.open { width: calc(var(--CW) + 1.25rem); }
+/* The opened book's caption floats over the row above */
+.slot.open,
+.slot.closing { z-index: 3; }
+/* A tipped book's top is wider than its slot; keep it above the books
+   next to it (later slots would otherwise paint over it) */
+@media (hover: hover) {
+  .slot:hover { z-index: 2; }
+}
+.slot:has(.hit:focus-visible) { z-index: 2; }
+
+/* The hover tilt lives in two variables, registered so they animate
+   (rotateX by --tip, lift by --lift times the book depth). The resting
+   pose and both ends of the turn (book-open, book-close) read them, so a
+   book always turns from, and returns to, wherever the tilt is right now,
+   including when the pointer arrives or leaves mid-turn.
+   Tilt only on devices that really hover: touch screens keep :hover stuck
+   on the last tapped book, which left a put-away book tilted. */
+@property --tip  { syntax: "<angle>";  inherits: true; initial-value: 0deg; }
+@property --lift { syntax: "<number>"; inherits: true; initial-value: 0; }
+.slot { --tip: 0deg; --lift: 0; }
+@media (hover: hover) {
+  .slot:hover { --tip: -22deg; --lift: -0.19; }
+}
+.slot:has(.hit:focus-visible) { --tip: -22deg; --lift: -0.19; }
+
+/* The invisible button over each book handles clicks and keyboard focus */
+.hit {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  /* No blue tap flash on Android; keyboard focus still shows an outline */
+  -webkit-tap-highlight-color: transparent;
+}
+.hit:focus { outline: none; }
+.hit:focus-visible + .book .spine-face,
+.hit:focus-visible + .book .cover-face {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.book {
+  --board: 0.22rem;     /* board / spine thickness (see .top-face) */
+  --recess: 0.2rem;     /* how far the pages sit below the boards */
+  --overhang: 0.32rem;  /* how far the boards reach past the pages at the fore-edge */
+  position: absolute;
+  left: 50%;
+  bottom: var(--plank);
+  width: var(--W);
+  height: var(--H);
+  transform-style: preserve-3d;
+  /* The spine sits at z = 0 (flush with the shelf front) and the book
+     extends backwards; it pivots about the middle of its depth */
+  transform-origin: 50% 100% calc(var(--CW) / -2);
+  transform: translateX(-50%) translateY(calc(var(--CW) * var(--lift))) translateZ(0) rotateX(var(--tip)) rotateY(0deg);
+  /* Keep each book on its own layer so it isn't re-rasterised (a visible
+     flicker on some phones) when the turn animation ends */
+  will-change: transform;
+}
+
+.face {
+  position: absolute;
+  backface-visibility: hidden;
+}
+
+/* Spine: vertical text reading top to bottom, title then surname */
+.spine-face {
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.95rem 0.3rem 0.8rem;
+  overflow: hidden;
+  /* Square at the top, where it meets the board edges of the top face */
+  border-radius: 0 0 1px 1px;
+  background: var(--cloth);
+  color: var(--ink-on);
+  writing-mode: vertical-rl;
+  /* Lay glyphs sideways like ordinary text so apostrophes render well */
+  text-orientation: sideways;
+  box-shadow:
+    inset 2px 0 0 rgba(255, 255, 255, 0.08),
+    inset -3px 0 0 rgba(0, 0, 0, 0.2);
+}
+
+/* Two thin bands near the head and tail, like a cloth binding */
+.spine-face::before,
+.spine-face::after {
+  content: "";
+  position: absolute;
+  left: 0.25rem;
+  right: 0.25rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.35;
+}
+.spine-face::before { top: 0.5rem; }
+.spine-face::after { bottom: 0.45rem; }
+
+/* The title fills the spine between the top and the surname. bookshelf.js
+   shrinks its font until the whole title fits (fitTitles). */
+.spine-title {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  min-block-size: 0;
+  max-block-size: 100%;
+  overflow: hidden;
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+}
+
+/* Thin books (short page counts) get smaller spine text */
+.slot.thin .spine-face { padding-left: 0.2rem; padding-right: 0.2rem; gap: 0.45rem; }
+.slot.thin .spine-title { font-size: 0.68rem; line-height: 1.1; }
+.slot.thin .spine-author { font-size: 0.56rem; }
+
+.spine-author {
+  flex: none;
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0.8;
+}
+
+/* Top of the book, built like a hardcover: the cover boards and spine
+   (::after, a cloth frame open at the fore-edge) stand at full height,
+   and the page block (::before) sits lower between them, ending just
+   short of the boards at the open fore-edge. In this face's own coordinates the
+   bottom edge is the spine, the top edge the fore-edge, and +Z points up
+   out of the book. The recess is deeper than a real book's ~3 mm so it
+   reads at this scale. */
+.top-face {
+  left: 0;
+  top: calc(var(--CW) / -2);
+  width: 100%;
+  height: var(--CW);
+  transform-style: preserve-3d;
+  transform: translateZ(calc(var(--CW) / -2)) rotateX(90deg);
+}
+.top-face::before,
+.top-face::after {
+  content: "";
+  position: absolute;
+}
+.top-face::before {
+  left: var(--board);
+  right: var(--board);
+  bottom: var(--board);
+  top: var(--overhang);   /* open fore-edge: the boards reach a little past the pages */
+  background: repeating-linear-gradient(90deg, #f1e9d6 0 1px, #d8cbb0 1px 2px);
+  /* Shade the pages where they meet the boards and the spine */
+  box-shadow:
+    inset 1px 0 1px rgba(0, 0, 0, 0.28),
+    inset -1px 0 1px rgba(0, 0, 0, 0.28),
+    inset 0 -2px 2px -1px rgba(0, 0, 0, 0.3);
+  transform: translateZ(calc(var(--recess) * -1));
+}
+.top-face::after {
+  inset: 0;
+  border: var(--board) solid var(--cloth);
+  border-top: 0;
+  /* The side edges reach 1px past the board's inner face, covering its
+     top: where the two only met along a line, a light seam showed */
+  border-left-width: calc(var(--board) + 1px);
+  border-right-width: calc(var(--board) + 1px);
+  border-radius: 1px;
+}
+
+/* Inner face of the back cover board: it stands where the board meets
+   the pages, one board-thickness in from the box's left side, directly
+   under the inner edge of the board's top edge (.top-face::after). The
+   top edge and this face make one solid slab resting against the pages,
+   seen above them when the book is viewed at a low angle mid-turn. (At
+   the box's outer side it left a channel under the top edge, which made
+   the board look hollow.) */
+.book::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(50% - var(--CW) / 2);
+  width: var(--CW);
+  height: 100%;
+  background: var(--cloth);
+  box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.1);
+  transform: translateZ(calc(var(--CW) / -2)) rotateY(-90deg) translateZ(calc(var(--W) / 2 - var(--board)));
+}
+/* The pages' fore-edge at the back of the box. It stops at the sunken
+   page level, so the top stays open on that side and is bound only by
+   the two boards and the spine. */
+.book::after {
+  content: "";
+  position: absolute;
+  inset: var(--recess) 0 0;
+  background: repeating-linear-gradient(90deg, #e9dfc8 0 1px, #d2c4a6 1px 2px);
+  transform: translateZ(calc((var(--CW) - var(--overhang)) * -1));
+}
+
+/* Front cover on the right-hand side of the box */
+.cover-face {
+  top: 0;
+  left: calc(50% - var(--CW) / 2);
+  width: var(--CW);
+  height: 100%;
+  overflow: hidden;
+  border-radius: 1px 3px 3px 1px;
+  background: var(--cloth);
+  box-shadow: inset 3px 0 0 rgba(0, 0, 0, 0.18);
+  transform: translateZ(calc(var(--CW) / -2)) rotateY(90deg) translateZ(calc(var(--W) / 2));
+}
+/* The hinge groove: the dip in a hardcover's board running parallel to
+   the spine, a little in from the spine edge (the cover's left edge).
+   A shadowed line with a highlight on its far side. */
+.cover-face::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--CW) * 0.025);
+  width: 0.32rem;
+  background: linear-gradient(90deg,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0.32) 40%,
+    rgba(0, 0, 0, 0.12) 60%,
+    rgba(255, 255, 255, 0.16) 75%,
+    rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+.cover-face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Title and author float above an opened book, with a small pointer down
+   to it. bookshelf.js shows it (.captioned) once the slot has finished
+   widening, after setting --dx to keep it inside the shelf. */
+.cover-caption {
+  --dx: 0px;
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--plank) + var(--H) + 0.65rem);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  width: max-content;
+  max-width: min(15rem, calc(100vw - 2.5rem));
+  padding: 0.45rem 0.7rem 0.5rem;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.6);
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(calc(-50% + var(--dx))) translateY(0.3rem);
+}
+.cover-caption::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: calc(50% - var(--dx));
+  width: 0.55rem;
+  height: 0.55rem;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  background: var(--paper);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.slot.captioned .cover-caption {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(calc(-50% + var(--dx))) translateY(0);
+}
+.cc-t {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.cc-a {
+  font-size: 0.68rem;
+  line-height: 1.25;
+  color: var(--muted);
+}
+
+/* Drawn cover for books without a published cover image */
+.cover-face.typo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem 0.8rem;
+  color: var(--ink-on);
+  box-shadow:
+    inset 0 0 0 0.4rem var(--cloth),
+    inset 0 0 0 calc(0.4rem + 1px) currentColor;
+}
+.cover-face.typo .t {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.cover-face.typo .ko {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  line-height: 1.35;
+  word-break: keep-all;
+  opacity: 0.9;
+}
+.cover-face.typo .a {
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+/* Every state below uses the same transform list
+     translateX  translateY  translateZ  rotateX  rotateY
+   so the browser interpolates each value on its own, smoothly. */
+
+/* Hover (or keyboard focus) tips the book toward the viewer from the top
+   (--tip / --lift above; the lift makes it pivot on its front-bottom
+   edge), and the spine casts a shadow. */
+@media (hover: hover) {
+  .slot:not(.open):hover .spine-face {
+    box-shadow:
+      inset 2px 0 0 rgba(255, 255, 255, 0.08),
+      inset -3px 0 0 rgba(0, 0, 0, 0.2),
+      0 10px 14px -6px rgba(0, 0, 0, 0.45);
+  }
+}
+
+/* Open: the cover faces out */
+.slot.open .book {
+  transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(-90deg);
+}
+
+/* The turn has a midpoint (book lifted toward the viewer). Each half has
+   its own easing: the first half speeds up and the second slows down,
+   with matching speeds at the midpoint, so the motion never stalls there. */
+@keyframes book-open {
+  0% {
+    transform: translateX(-50%) translateY(calc(var(--CW) * var(--lift))) translateZ(0) rotateX(var(--tip)) rotateY(0deg);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.8, 0.6);
+  }
+  35% {
+    transform: translateX(-50%) translateY(calc(var(--CW) * -0.06)) translateZ(3rem) rotateX(-10deg) rotateY(-30deg);
+    animation-timing-function: cubic-bezier(0.2, 0.4, 0.2, 1);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(-90deg);
+  }
+}
+@keyframes book-close {
+  0% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(-90deg);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.8, 0.6);
+  }
+  60% {
+    transform: translateX(-50%) translateY(calc(var(--CW) * -0.06)) translateZ(3rem) rotateX(-10deg) rotateY(-30deg);
+    animation-timing-function: cubic-bezier(0.2, 0.4, 0.2, 1);
+  }
+  100% {
+    transform: translateX(-50%) translateY(calc(var(--CW) * var(--lift))) translateZ(0) rotateX(var(--tip)) rotateY(0deg);
+  }
+}
+
+/* Touch screens: the same turn with no var() in the keyframes (the lift is
+   a share of the book's own height, about 0.06 of its depth), and the
+   final pose reached early and held. iPhone Safari re-resolves keyframes
+   that use variables when the slot's classes change mid-turn, which can
+   show a stale frame at the end: a small twitch back and forth. Without
+   variables nothing is re-resolved, and a frame from the held stretch
+   looks the same as the last one anyway. Same timings as above: the
+   midpoint at 0.28s / 0.39s, the end at 0.8s / 0.65s. */
+@keyframes book-open-touch {
+  0% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(0deg);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.8, 0.6);
+  }
+  31.1% {
+    transform: translateX(-50%) translateY(-4%) translateZ(3rem) rotateX(-10deg) rotateY(-30deg);
+    animation-timing-function: cubic-bezier(0.2, 0.4, 0.2, 1);
+  }
+  88.9%, 100% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(-90deg);
+  }
+}
+@keyframes book-close-touch {
+  0% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(-90deg);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.8, 0.6);
+  }
+  52% {
+    transform: translateX(-50%) translateY(-4%) translateZ(3rem) rotateX(-10deg) rotateY(-30deg);
+    animation-timing-function: cubic-bezier(0.2, 0.4, 0.2, 1);
+  }
+  86.7%, 100% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(0deg);
+  }
+}
+
+/* The slot finishes widening (0.6s) well before the turn ends (0.8s), so
+   no layout work lands on the turn's last frames. When a book is put
+   back, its slot waits and then narrows slowly, so the books to its right
+   don't slide into it while it is still turned. */
+@media (prefers-reduced-motion: no-preference) {
+  .slot {
+    transition:
+      width 0.6s cubic-bezier(0.3, 0.7, 0.2, 1),
+      --tip 0.3s ease,
+      --lift 0.3s ease;
+  }
+  .slot.closing {
+    transition:
+      width 0.45s cubic-bezier(0.45, 0, 0.25, 1) 0.26s,
+      --tip 0.3s ease,
+      --lift 0.3s ease;
+  }
+  .slot.open .book { animation: book-open 0.8s linear both; }
+  .slot.closing .book { animation: book-close 0.65s linear both; }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: none) {
+  .slot.open .book { animation: book-open-touch 0.9s linear both; }
+  .slot.closing .book { animation: book-close-touch 0.75s linear both; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cover-caption {
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s linear 0.15s;
+  }
+  .slot.captioned .cover-caption {
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s;
+  }
+}
+
+/* Phones: shorter shelves and slimmer books */
+@media (max-width: 40rem) {
+  :root {
+    --row-h: 13.75rem;
+    --s: 0.78;
+    --sw: 0.86;
+  }
+  .spine-face {
+    padding: 0.75rem 0.22rem 0.6rem;
+    gap: 0.45rem;
+  }
+  .spine-title { font-size: 0.68rem; }
+  .spine-author { font-size: 0.56rem; }
+  .cover-face.typo { padding: 0.8rem 0.6rem; }
+  .cover-face.typo .t { font-size: 0.8rem; }
+  .cover-caption { max-width: min(12rem, calc(100vw - 2.5rem)); padding: 0.35rem 0.55rem 0.4rem; }
+  .cc-t { font-size: 0.72rem; }
+  .cc-a { font-size: 0.62rem; }
+}
+
+
+.vB .slot:hover { z-index: auto; }
+.vC .slot, .vD .slot { transition: none; }
+.vC .book, .vD .book { transition: transform 0.3s ease; }
+.vD .slot:hover { z-index: auto; }
+.vE .book { will-change: auto; }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Safari hover test</h1>
+  <p class="intro">Open this in <b>Safari on a Mac</b> (or an iPad with a trackpad) and slowly move the pointer onto each book.
+  Note which rows show the book dropping down for a moment before it tips. The rows differ in one thing each, so the answer tells me which part of the bookshelf causes it.</p>
+  
+<section class="variant vA" aria-labelledby="vA-h">
+  <div class="label"><h2 id="vA-h"><span class="tag">A</span> As it is now</h2><p>The hovered book is raised above its neighbours, and the tilt runs through two animated variables.</p></div>
+  <div class="rows"><ul class="shelf" role="list">
+<li class="slot" style="--h:12.28; --w:2.19; --cr:0.647; --cloth:#b0aab0; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Politics by Aristotle"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Politics</span><span class="spine-author">Aristotle</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Politics</span><span class="cc-a">Aristotle</span></div>
+          </li>
+<li class="slot thin" style="--h:14.17; --w:1.35; --cr:0.644; --cloth:#f8dc9b; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Oroonoko by Behn, Aphra"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Oroonoko</span><span class="spine-author">Behn</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Oroonoko</span><span class="cc-a">Aphra Behn</span></div>
+          </li>
+<li class="slot" style="--h:12.71; --w:2.67; --cr:0.731; --cloth:#91181c; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="The Analects (논어) by Confucius"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">The Analects</span><span class="spine-author">Confucius</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">The Analects</span><span class="cc-a">Confucius</span></div>
+          </li>
+<li class="slot" style="--h:12.82; --w:2.67; --cr:0.667; --cloth:#a2c7b8; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Galore by Crummey, Michael"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Galore</span><span class="spine-author">Crummey</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Galore</span><span class="cc-a">Michael Crummey</span></div>
+          </li>
+<li class="slot thin" style="--h:14.19; --w:1.39; --cr:0.637; --cloth:#4d4a48; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Man’s Search for Meaning by Frankl, Viktor E."></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Man’s Search for Meaning</span><span class="spine-author">Frankl</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Man’s Search for Meaning</span><span class="cc-a">Viktor E. Frankl</span></div>
+          </li>
+<li class="slot thin" style="--h:11.84; --w:1.49; --cr:0.558; --cloth:#261918; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Lord of the Flies by Golding, William"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Lord of the Flies</span><span class="spine-author">Golding</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Lord of the Flies</span><span class="cc-a">William Golding</span></div>
+          </li>
+<li class="slot" style="--h:12.91; --w:2.01; --cr:0.681; --cloth:#000101; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="The Outsiders by Hinton, S. E."></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">The Outsiders</span><span class="spine-author">Hinton</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">The Outsiders</span><span class="cc-a">S. E. Hinton</span></div>
+          </li>
+  </ul></div>
+</section>
+<section class="variant vB" aria-labelledby="vB-h">
+  <div class="label"><h2 id="vB-h"><span class="tag">B</span> No raising</h2><p>Same as A, but the hovered book is not raised above its neighbours.</p></div>
+  <div class="rows"><ul class="shelf" role="list">
+<li class="slot" style="--h:12.28; --w:2.19; --cr:0.647; --cloth:#b0aab0; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Politics by Aristotle"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Politics</span><span class="spine-author">Aristotle</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Politics</span><span class="cc-a">Aristotle</span></div>
+          </li>
+<li class="slot thin" style="--h:14.17; --w:1.35; --cr:0.644; --cloth:#f8dc9b; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Oroonoko by Behn, Aphra"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Oroonoko</span><span class="spine-author">Behn</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Oroonoko</span><span class="cc-a">Aphra Behn</span></div>
+          </li>
+<li class="slot" style="--h:12.71; --w:2.67; --cr:0.731; --cloth:#91181c; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="The Analects (논어) by Confucius"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">The Analects</span><span class="spine-author">Confucius</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">The Analects</span><span class="cc-a">Confucius</span></div>
+          </li>
+<li class="slot" style="--h:12.82; --w:2.67; --cr:0.667; --cloth:#a2c7b8; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Galore by Crummey, Michael"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Galore</span><span class="spine-author">Crummey</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Galore</span><span class="cc-a">Michael Crummey</span></div>
+          </li>
+<li class="slot thin" style="--h:14.19; --w:1.39; --cr:0.637; --cloth:#4d4a48; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Man’s Search for Meaning by Frankl, Viktor E."></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Man’s Search for Meaning</span><span class="spine-author">Frankl</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Man’s Search for Meaning</span><span class="cc-a">Viktor E. Frankl</span></div>
+          </li>
+<li class="slot thin" style="--h:11.84; --w:1.49; --cr:0.558; --cloth:#261918; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Lord of the Flies by Golding, William"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Lord of the Flies</span><span class="spine-author">Golding</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Lord of the Flies</span><span class="cc-a">William Golding</span></div>
+          </li>
+<li class="slot" style="--h:12.91; --w:2.01; --cr:0.681; --cloth:#000101; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="The Outsiders by Hinton, S. E."></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">The Outsiders</span><span class="spine-author">Hinton</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">The Outsiders</span><span class="cc-a">S. E. Hinton</span></div>
+          </li>
+  </ul></div>
+</section>
+<section class="variant vC" aria-labelledby="vC-h">
+  <div class="label"><h2 id="vC-h"><span class="tag">C</span> Old tilt animation</h2><p>Same as A, but the tilt is a plain transform animation, as before the laptop hover fix.</p></div>
+  <div class="rows"><ul class="shelf" role="list">
+<li class="slot" style="--h:12.28; --w:2.19; --cr:0.647; --cloth:#b0aab0; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Politics by Aristotle"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Politics</span><span class="spine-author">Aristotle</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Politics</span><span class="cc-a">Aristotle</span></div>
+          </li>
+<li class="slot thin" style="--h:14.17; --w:1.35; --cr:0.644; --cloth:#f8dc9b; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Oroonoko by Behn, Aphra"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Oroonoko</span><span class="spine-author">Behn</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Oroonoko</span><span class="cc-a">Aphra Behn</span></div>
+          </li>
+<li class="slot" style="--h:12.71; --w:2.67; --cr:0.731; --cloth:#91181c; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="The Analects (논어) by Confucius"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">The Analects</span><span class="spine-author">Confucius</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">The Analects</span><span class="cc-a">Confucius</span></div>
+          </li>
+<li class="slot" style="--h:12.82; --w:2.67; --cr:0.667; --cloth:#a2c7b8; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Galore by Crummey, Michael"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Galore</span><span class="spine-author">Crummey</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Galore</span><span class="cc-a">Michael Crummey</span></div>
+          </li>
+<li class="slot thin" style="--h:14.19; --w:1.39; --cr:0.637; --cloth:#4d4a48; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Man’s Search for Meaning by Frankl, Viktor E."></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Man’s Search for Meaning</span><span class="spine-author">Frankl</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Man’s Search for Meaning</span><span class="cc-a">Viktor E. Frankl</span></div>
+          </li>
+<li class="slot thin" style="--h:11.84; --w:1.49; --cr:0.558; --cloth:#261918; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Lord of the Flies by Golding, William"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Lord of the Flies</span><span class="spine-author">Golding</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Lord of the Flies</span><span class="cc-a">William Golding</span></div>
+          </li>
+<li class="slot" style="--h:12.91; --w:2.01; --cr:0.681; --cloth:#000101; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="The Outsiders by Hinton, S. E."></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">The Outsiders</span><span class="spine-author">Hinton</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">The Outsiders</span><span class="cc-a">S. E. Hinton</span></div>
+          </li>
+  </ul></div>
+</section>
+<section class="variant vD" aria-labelledby="vD-h">
+  <div class="label"><h2 id="vD-h"><span class="tag">D</span> B and C together</h2><p>No raising and the old tilt animation.</p></div>
+  <div class="rows"><ul class="shelf" role="list">
+<li class="slot" style="--h:12.28; --w:2.19; --cr:0.647; --cloth:#b0aab0; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Politics by Aristotle"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Politics</span><span class="spine-author">Aristotle</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Politics</span><span class="cc-a">Aristotle</span></div>
+          </li>
+<li class="slot thin" style="--h:14.17; --w:1.35; --cr:0.644; --cloth:#f8dc9b; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Oroonoko by Behn, Aphra"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Oroonoko</span><span class="spine-author">Behn</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Oroonoko</span><span class="cc-a">Aphra Behn</span></div>
+          </li>
+<li class="slot" style="--h:12.71; --w:2.67; --cr:0.731; --cloth:#91181c; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="The Analects (논어) by Confucius"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">The Analects</span><span class="spine-author">Confucius</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">The Analects</span><span class="cc-a">Confucius</span></div>
+          </li>
+<li class="slot" style="--h:12.82; --w:2.67; --cr:0.667; --cloth:#a2c7b8; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Galore by Crummey, Michael"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Galore</span><span class="spine-author">Crummey</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Galore</span><span class="cc-a">Michael Crummey</span></div>
+          </li>
+<li class="slot thin" style="--h:14.19; --w:1.39; --cr:0.637; --cloth:#4d4a48; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Man’s Search for Meaning by Frankl, Viktor E."></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Man’s Search for Meaning</span><span class="spine-author">Frankl</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Man’s Search for Meaning</span><span class="cc-a">Viktor E. Frankl</span></div>
+          </li>
+<li class="slot thin" style="--h:11.84; --w:1.49; --cr:0.558; --cloth:#261918; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Lord of the Flies by Golding, William"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Lord of the Flies</span><span class="spine-author">Golding</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Lord of the Flies</span><span class="cc-a">William Golding</span></div>
+          </li>
+<li class="slot" style="--h:12.91; --w:2.01; --cr:0.681; --cloth:#000101; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="The Outsiders by Hinton, S. E."></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">The Outsiders</span><span class="spine-author">Hinton</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">The Outsiders</span><span class="cc-a">S. E. Hinton</span></div>
+          </li>
+  </ul></div>
+</section>
+<section class="variant vE" aria-labelledby="vE-h">
+  <div class="label"><h2 id="vE-h"><span class="tag">E</span> No layer hint</h2><p>Same as A, but without will-change on the books.</p></div>
+  <div class="rows"><ul class="shelf" role="list">
+<li class="slot" style="--h:12.28; --w:2.19; --cr:0.647; --cloth:#b0aab0; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Politics by Aristotle"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Politics</span><span class="spine-author">Aristotle</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Politics</span><span class="cc-a">Aristotle</span></div>
+          </li>
+<li class="slot thin" style="--h:14.17; --w:1.35; --cr:0.644; --cloth:#f8dc9b; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Oroonoko by Behn, Aphra"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Oroonoko</span><span class="spine-author">Behn</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Oroonoko</span><span class="cc-a">Aphra Behn</span></div>
+          </li>
+<li class="slot" style="--h:12.71; --w:2.67; --cr:0.731; --cloth:#91181c; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="The Analects (논어) by Confucius"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">The Analects</span><span class="spine-author">Confucius</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">The Analects</span><span class="cc-a">Confucius</span></div>
+          </li>
+<li class="slot" style="--h:12.82; --w:2.67; --cr:0.667; --cloth:#a2c7b8; --ink-on:#1c1a16">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Galore by Crummey, Michael"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Galore</span><span class="spine-author">Crummey</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Galore</span><span class="cc-a">Michael Crummey</span></div>
+          </li>
+<li class="slot thin" style="--h:14.19; --w:1.39; --cr:0.637; --cloth:#4d4a48; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Man’s Search for Meaning by Frankl, Viktor E."></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Man’s Search for Meaning</span><span class="spine-author">Frankl</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Man’s Search for Meaning</span><span class="cc-a">Viktor E. Frankl</span></div>
+          </li>
+<li class="slot thin" style="--h:11.84; --w:1.49; --cr:0.558; --cloth:#261918; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="Lord of the Flies by Golding, William"></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">Lord of the Flies</span><span class="spine-author">Golding</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">Lord of the Flies</span><span class="cc-a">William Golding</span></div>
+          </li>
+<li class="slot" style="--h:12.91; --w:2.01; --cr:0.681; --cloth:#000101; --ink-on:#f3efe6">
+            <button class="hit" type="button" aria-expanded="false"
+                    aria-label="The Outsiders by Hinton, S. E."></button>
+            <div class="book" aria-hidden="true">
+              <div class="face spine-face"><span class="spine-title">The Outsiders</span><span class="spine-author">Hinton</span></div>
+              <div class="face top-face"></div>
+              <div class="face cover-face"></div>
+            </div>
+            <div class="cover-caption" aria-hidden="true"><span class="cc-t">The Outsiders</span><span class="cc-a">S. E. Hinton</span></div>
+          </li>
+  </ul></div>
+</section>
+</div>
+
+</body>
+</html>
