@@ -350,9 +350,45 @@
   }
 }
 
+/* Touch screens: the same turn with no var() in the keyframes (the lift is
+   a share of the book's own height, about 0.06 of its depth), and the
+   final pose reached early and held. iPhone Safari re-resolves keyframes
+   that use variables when the slot's classes change mid-turn, which can
+   show a stale frame at the end: a small twitch back and forth. Without
+   variables nothing is re-resolved, and a frame from the held stretch
+   looks the same as the last one anyway. Same timings as above: the
+   midpoint at 0.28s / 0.39s, the end at 0.8s / 0.65s. */
+@keyframes book-open-touch {
+  0% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(0deg);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.8, 0.6);
+  }
+  31.1% {
+    transform: translateX(-50%) translateY(-4%) translateZ(3rem) rotateX(-10deg) rotateY(-30deg);
+    animation-timing-function: cubic-bezier(0.2, 0.4, 0.2, 1);
+  }
+  88.9%, 100% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(-90deg);
+  }
+}
+@keyframes book-close-touch {
+  0% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(-90deg);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.8, 0.6);
+  }
+  52% {
+    transform: translateX(-50%) translateY(-4%) translateZ(3rem) rotateX(-10deg) rotateY(-30deg);
+    animation-timing-function: cubic-bezier(0.2, 0.4, 0.2, 1);
+  }
+  86.7%, 100% {
+    transform: translateX(-50%) translateY(0) translateZ(0) rotateX(0deg) rotateY(0deg);
+  }
+}
+
 /* The slot finishes widening (0.6s) well before the turn ends (0.8s), so
-   no layout work lands on the turn's last frames: phones could otherwise
-   show a stale frame there, a little twitch back and forth. */
+   no layout work lands on the turn's last frames. When a book is put
+   back, its slot waits and then narrows slowly, so the books to its right
+   don't slide into it while it is still turned. */
 @media (prefers-reduced-motion: no-preference) {
   .slot {
     transition:
@@ -360,8 +396,20 @@
       --tip 0.3s ease,
       --lift 0.3s ease;
   }
+  .slot.closing {
+    transition:
+      width 0.45s cubic-bezier(0.45, 0, 0.25, 1) 0.26s,
+      --tip 0.3s ease,
+      --lift 0.3s ease;
+  }
   .slot.open .book { animation: book-open 0.8s linear both; }
   .slot.closing .book { animation: book-close 0.65s linear both; }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: none) {
+  .slot.open .book { animation: book-open-touch 0.9s linear both; }
+  .slot.closing .book { animation: book-close-touch 0.75s linear both; }
+}
+@media (prefers-reduced-motion: no-preference) {
   .cover-caption {
     transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s linear 0.15s;
   }

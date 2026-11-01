@@ -113,9 +113,9 @@
       slot.classList.remove('closing');
       book.removeEventListener('animationend', onEnd);
     }
-    function onEnd(e) { if (e.animationName === 'book-close') finish(); }
+    function onEnd(e) { if (e.animationName.indexOf('book-close') === 0) finish(); }
     book.addEventListener('animationend', onEnd);
-    setTimeout(finish, 900);
+    setTimeout(finish, 1000);
   }
 
   slots.forEach(function (slot) {
