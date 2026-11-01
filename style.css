@@ -170,6 +170,14 @@ a:focus-visible {
 
 .back:hover { color: var(--accent); }
 
+.subhead .statement { max-width: 38rem; }
+
+.subhead .note {
+  max-width: 38rem;
+  margin-top: 0.6rem;
+  color: var(--muted);
+}
+
 .page-title {
   margin-bottom: 1rem;
   font-size: clamp(2.5rem, 9vw, 5rem);
