@@ -87,6 +87,8 @@
   border: 0;
   background: none;
   cursor: pointer;
+  /* No blue tap flash on Android; keyboard focus still shows an outline */
+  -webkit-tap-highlight-color: transparent;
 }
 .hit:focus { outline: none; }
 .hit:focus-visible + .book .spine-face,
