@@ -1,6 +1,6 @@
 // Bookshelf: each book is a 3D box (see bookshelf.css). Clicking a book
-// turns it so its cover faces out (title and author fade in across the top
-// of the cover) and widens its slot; clicking it again,
+// turns it so its cover faces out (title and author fade in above the book)
+// and widens its slot; clicking it again,
 // pressing Escape, or opening another book turns it back. Cover images
 // load the first time a book is hovered, focused or opened.
 (function () {
@@ -54,13 +54,26 @@
     slots.forEach(function (slot) { near.observe(slot); });
   }
 
-  // After the turn, scroll only if the cover ended up partly off screen
-  // (for example when widening the slot moved the book to the next row).
-  function reveal(slot) {
-    var r = slot.querySelector('.cover-face').getBoundingClientRect();
+  // Once the opened slot has finished widening (and so sits in its final
+  // row), show the caption above the book, shifted sideways (--dx) to stay
+  // inside the shelf, then scroll only if the caption or cover is partly
+  // off screen. This runs at 0.6s, before the turn ends at 0.8s, so the
+  // turn's last frames have no layout or scrolling to compete with.
+  function settle(slot) {
+    var cap = slot.querySelector('.cover-caption');
+    cap.style.setProperty('--dx', '0px');
+    var c = cap.getBoundingClientRect();
+    var s = slot.parentNode.getBoundingClientRect();
+    var dx = 0;
+    if (c.left < s.left) dx = s.left - c.left;
+    else if (c.right > s.right) dx = s.right - c.right;
+    cap.style.setProperty('--dx', dx.toFixed(1) + 'px');
+    slot.classList.add('captioned');
+
+    var top = c.top, bottom = slot.querySelector('.cover-face').getBoundingClientRect().bottom;
     var vh = window.innerHeight, pad = 12, dy = 0;
-    if (r.top < pad) dy = r.top - pad;
-    else if (r.bottom > vh - pad) dy = Math.min(r.bottom - vh + pad, r.top - pad);
+    if (top < pad) dy = top - pad;
+    else if (bottom > vh - pad) dy = Math.min(bottom - vh + pad, top - pad);
     if (Math.abs(dy) >= 1) {
       window.scrollBy({ top: dy, behavior: still.matches ? 'auto' : 'smooth' });
     }
@@ -72,15 +85,23 @@
     slot.classList.add('open');
     slot.querySelector('.hit').setAttribute('aria-expanded', 'true');
     current = slot;
-    setTimeout(function () {
-      if (current === slot) reveal(slot);
-    }, still.matches ? 0 : 780);
+    var done = false;
+    function go() {
+      if (done) return;
+      done = true;
+      slot.removeEventListener('transitionend', onEnd);
+      if (current === slot) settle(slot);
+    }
+    function onEnd(e) { if (e.target === slot && e.propertyName === 'width') go(); }
+    if (still.matches) { go(); return; }
+    slot.addEventListener('transitionend', onEnd);
+    setTimeout(go, 650);
   }
 
   function close(slot) {
     if (!slot) return;
     if (current === slot) current = null;
-    slot.classList.remove('open');
+    slot.classList.remove('open', 'captioned');
     slot.querySelector('.hit').setAttribute('aria-expanded', 'false');
     if (still.matches) return;
     slot.classList.add('closing');
