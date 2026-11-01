@@ -104,8 +104,8 @@
 }
 
 .book {
-  --board: 0.14rem;     /* board / spine thickness (see .top-face) */
-  --recess: 0.24rem;    /* how far the pages sit below the boards */
+  --board: 0.18rem;     /* board / spine thickness (see .top-face) */
+  --recess: 0.2rem;     /* how far the pages sit below the boards */
   --overhang: 0.32rem;  /* how far the boards reach past the pages at the fore-edge */
   position: absolute;
   left: 50%;
@@ -232,9 +232,10 @@
 
 /* Back cover on the left-hand side of the box. It is never seen from
    outside; only its inner side shows, as the strip of board above the
-   sunken pages when the book is seen at a low angle mid-turn. On a real
-   hardcover that strip is lined with endpaper, so it is paper-coloured
-   (dark cloth there made the top look hollow). */
+   sunken pages when the book is seen at a low angle mid-turn. It is the
+   cloth colour, barely shaded, so it reads together with the board's top
+   edge as one solid board resting against the pages (a paper or dark
+   strip there made the board look like a thin shell: hollow). */
 .book::before {
   content: "";
   position: absolute;
@@ -242,7 +243,8 @@
   left: calc(50% - var(--CW) / 2);
   width: var(--CW);
   height: 100%;
-  background: #e6ddc8;
+  background: var(--cloth);
+  box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.1);
   transform: translateZ(calc(var(--CW) / -2)) rotateY(-90deg) translateZ(calc(var(--W) / 2));
 }
 /* The pages' fore-edge at the back of the box. It stops at the sunken
