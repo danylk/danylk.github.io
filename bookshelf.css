@@ -180,16 +180,73 @@
   opacity: 0.8;
 }
 
-/* Page edges on top, bound by the cloth on three sides */
+/* Top of the book, built like a hardcover: the cover boards and spine
+   (::after, a cloth frame open at the fore-edge) stand at full height,
+   and the page block (::before) sits lower and inside them, stopping
+   short of the boards' fore-edge. In this face's own coordinates the
+   bottom edge is the spine, the top edge the fore-edge, and +Z points up
+   out of the book. The recess is deeper than a real book's ~3 mm so it
+   reads at this scale. */
 .top-face {
+  --board: 0.14rem;     /* board / spine thickness */
+  --recess: 0.24rem;    /* how far the pages sit below the boards */
   left: 0;
   top: calc(var(--CW) / -2);
   width: 100%;
   height: var(--CW);
-  background: repeating-linear-gradient(90deg, #f1e9d6 0 1px, #d8cbb0 1px 2px);
-  border: 2px solid var(--cloth);
-  border-top: 0;
+  transform-style: preserve-3d;
   transform: translateZ(calc(var(--CW) / -2)) rotateX(90deg);
+}
+.top-face::before,
+.top-face::after {
+  content: "";
+  position: absolute;
+}
+.top-face::before {
+  left: var(--board);
+  right: var(--board);
+  bottom: var(--board);
+  top: var(--board);
+  background: repeating-linear-gradient(90deg, #f1e9d6 0 1px, #d8cbb0 1px 2px);
+  /* Shade the pages where they meet the boards and the spine */
+  box-shadow:
+    inset 1px 0 1px rgba(0, 0, 0, 0.28),
+    inset -1px 0 1px rgba(0, 0, 0, 0.28),
+    inset 0 -2px 2px -1px rgba(0, 0, 0, 0.3);
+  transform: translateZ(calc(var(--recess) * -1));
+}
+.top-face::after {
+  inset: 0;
+  border: var(--board) solid var(--cloth);
+  border-top: 0;
+  /* A touch lighter than the cloth, like a board's worn top edge */
+  box-shadow: inset 0 0 0 var(--board) rgba(255, 255, 255, 0.12);
+  border-radius: 1px;
+}
+
+/* Back cover on the left-hand side of the box. It is never seen from
+   outside, but with the pages sunk below the boards its inner side shows
+   above them when the book is seen at a low angle mid-turn; without it
+   the background showed through there. */
+.book::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: calc(50% - var(--CW) / 2);
+  width: var(--CW);
+  height: 100%;
+  background: var(--cloth);
+  box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.25);
+  transform: translateZ(calc(var(--CW) / -2)) rotateY(-90deg) translateZ(calc(var(--W) / 2));
+}
+/* The pages' fore-edge, closing the back of the box, so a low view across
+   the sunken pages meets pages rather than the background behind. */
+.book::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, #e9dfc8 0 1px, #d2c4a6 1px 2px);
+  transform: translateZ(calc(var(--CW) * -1));
 }
 
 /* Front cover on the right-hand side of the box */
@@ -203,6 +260,24 @@
   background: var(--cloth);
   box-shadow: inset 3px 0 0 rgba(0, 0, 0, 0.18);
   transform: translateZ(calc(var(--CW) / -2)) rotateY(90deg) translateZ(calc(var(--W) / 2));
+}
+/* The hinge groove: the dip in a hardcover's board running parallel to
+   the spine, a little in from the spine edge (the cover's left edge).
+   A shadowed line with a highlight on its far side. */
+.cover-face::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--CW) * 0.055);
+  width: 0.32rem;
+  background: linear-gradient(90deg,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0.32) 40%,
+    rgba(0, 0, 0, 0.12) 60%,
+    rgba(255, 255, 255, 0.16) 75%,
+    rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
 }
 .cover-face img {
   display: block;
