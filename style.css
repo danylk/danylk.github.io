@@ -20,10 +20,10 @@
 }
 
 :root[data-theme="light"] {
-  --paper:  #F4F5F3;
-  --ink:    #16181B;
-  --muted:  #687079;
-  --rule:   #D9DCD8;
+  --paper:  #F3EEE4;
+  --ink:    #1E1A15;
+  --muted:  #6E655A;
+  --rule:   #DCD2C2;
   --accent: #0E6B5C;
   color-scheme: light;
 }

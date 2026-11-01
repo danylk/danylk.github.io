@@ -20,8 +20,8 @@
 }
 
 :root[data-theme="light"] {
-  --plank-top:  #c9ad86;
-  --plank-edge: #9c7f5b;
+  --plank-top:  #8a6544;
+  --plank-edge: #5b412c;
 }
 
 .shelf-block .rows { min-width: 0; }
