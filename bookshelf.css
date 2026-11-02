@@ -183,9 +183,12 @@ html { overflow-anchor: none; }
 }
 
 /* Thin books (short page counts) get smaller spine text */
-.slot.thin .spine-face { padding-left: 0.2rem; padding-right: 0.2rem; gap: 0.45rem; }
-.slot.thin .spine-title { font-size: 0.68rem; line-height: 1.1; }
-.slot.thin .spine-author { font-size: 0.56rem; }
+.slot.thin .spine-face,
+.mg-c.thin .spine-face { padding-left: 0.2rem; padding-right: 0.2rem; gap: 0.45rem; }
+.slot.thin .spine-title,
+.mg-c.thin .spine-title { font-size: 0.68rem; line-height: 1.1; }
+.slot.thin .spine-author,
+.mg-c.thin .spine-author { font-size: 0.56rem; }
 
 .spine-author {
   flex: none;
@@ -537,13 +540,27 @@ html { overflow-anchor: none; }
    <head> does it before paint for a saved choice). Without JS the
    switch stays hidden and the shelf shows. */
 
-.view-list { display: none; }
-:root[data-view="list"] .view-shelf { display: none; }
-:root[data-view="list"] .view-list { display: block; }
-:root[data-view="list"] .shelf-only { display: none; }
-:root[data-view="list"] .shelf-only { display: none; }
+/* The view not shown stays rendered but collapsed: no height, clipped.
+   bookshelf.js also hides it from screen readers (aria-hidden) and takes
+   its books out of the tab order. With display: none the browser would
+   drop the shelf's styles and rebuild them on every switch, and hiding it
+   with visibility (inherited) would restyle every element in both views;
+   this way only the two view boxes change. */
+:root[data-view="list"] .view-shelf,
+:root:not([data-view="list"]) .view-list {
+  height: 0;
+  overflow: hidden;
+}
+/* The shelf hint keeps its space in List view, so the header (and the
+   switch in it) doesn't move when the view changes */
+:root[data-view="list"] .shelf-only { visibility: hidden; opacity: 0; }
 
+/* The switch: a pill (.vs-pill) slides behind the pressed button,
+   stretching across both on the way (bookshelf.js places and animates
+   it). Each button has a small icon, three spines or three lines, that
+   rises or draws itself in when its button is pressed. */
 .view-switch {
+  position: relative;
   display: inline-flex;
   margin-top: 1.25rem;
   padding: 2px;
@@ -552,8 +569,23 @@ html { overflow-anchor: none; }
 }
 .view-switch[hidden] { display: none; }
 
+.vs-pill {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  left: 0;
+  width: 0;
+  border-radius: 999px;
+  background: var(--rule);
+  transform-origin: 0 50%;
+}
+
 .view-switch button {
-  padding: 0.25rem 0.95rem;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.95rem 0.25rem 0.8rem;
   border: 0;
   border-radius: 999px;
   background: none;
@@ -563,10 +595,7 @@ html { overflow-anchor: none; }
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.view-switch button[aria-pressed="true"] {
-  background: var(--rule);
-  color: var(--ink);
-}
+.view-switch button[aria-pressed="true"] { color: var(--ink); }
 @media (hover: hover) {
   .view-switch button[aria-pressed="false"]:hover { color: var(--accent); }
 }
@@ -574,6 +603,116 @@ html { overflow-anchor: none; }
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+.vs-icon {
+  display: inline-flex;
+  flex: none;
+  width: 12px;
+  height: 11px;
+}
+.vs-icon i {
+  display: block;
+  border-radius: 1px;
+  background: currentColor;
+}
+.vs-shelf {
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.vs-shelf i { width: 3px; transform-origin: 50% 100%; }
+.vs-shelf i:nth-child(1) { height: 82%; }
+.vs-shelf i:nth-child(2) { height: 100%; }
+.vs-shelf i:nth-child(3) { height: 64%; }
+.vs-list {
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1px 0;
+}
+.vs-list i { height: 2px; transform-origin: 0 50%; }
+.vs-list i:nth-child(1) { width: 100%; }
+.vs-list i:nth-child(2) { width: 66%; }
+.vs-list i:nth-child(3) { width: 84%; }
+
+@keyframes vs-rise {
+  0%   { transform: scaleY(0.12); }
+  100% { transform: scaleY(1); }
+}
+@keyframes vs-draw {
+  0%   { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+
+/* Only transforms here, and no delays (the bars stagger by length):
+   anything else would run on the main thread, and while it runs Chrome
+   restyles every moving book of the view change on every frame. Colours
+   and the shelf hint change at once for the same reason. */
+@media (prefers-reduced-motion: no-preference) {
+  /* .vs-played is added on the first click, so nothing plays on load */
+  .vs-played [aria-pressed="true"] .vs-shelf i {
+    animation: vs-rise 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+  }
+  .vs-played [aria-pressed="true"] .vs-list i {
+    animation: vs-draw 0.45s cubic-bezier(0.25, 1, 0.4, 1) both;
+  }
+  .vs-played [aria-pressed="true"] .vs-icon i:nth-child(2) { animation-duration: 0.62s; }
+  .vs-played [aria-pressed="true"] .vs-icon i:nth-child(3) { animation-duration: 0.74s; }
+}
+
+/* View change (bookshelf.js, morphTo) ---------------------------------
+   Ghosts in a layer over the page carry each book between its list
+   entry and its spine: .mg-a is the list title (and author), .mg-b a copy
+   of the spine title, and both fly the same path, cross-fading half way;
+   .mg-c is a copy of the spine's cloth, which builds up from the shelf
+   (to Shelf) or sinks into it (to List) while a band of light (.mg-band)
+   sweeps over it. Only transforms and opacity are animated. The layer
+   has a fixed size and contain: strict, so adding or removing ghosts
+   lays out only the layer, not the page. */
+
+.morph-layer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+  contain: strict;
+  pointer-events: none;
+  z-index: 5;
+}
+.morph-layer > div { position: absolute; }
+
+.mg-a {
+  line-height: 1.4;
+  color: var(--ink);
+  will-change: transform, opacity;
+}
+.mg-au {
+  position: absolute;
+  left: 0;
+  top: 100%;
+}
+.mg-b {
+  overflow: hidden;
+  writing-mode: vertical-rl;
+  text-orientation: sideways;
+  will-change: transform, opacity;
+}
+.mg-c {
+  overflow: hidden;
+  transform-origin: 50% 100%;
+  will-change: transform, opacity;
+}
+.mg-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 40%;
+  background: linear-gradient(to bottom,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0));
+}
+.mg-line { height: 1px; }
 
 .book-list {
   margin: 0;
