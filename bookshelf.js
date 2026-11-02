@@ -111,9 +111,12 @@
     toggled.forEach(function (slot) {
       Array.prototype.forEach.call(slot.parentNode.children, function (el) { list.push(el); });
       // Everything after the book's section: the sections below it, then
-      // what follows the shelf view (the footer)
+      // what follows the shelf view (the footer; not the collapsed list
+      // view, which doesn't show)
       for (var a = slot.closest('section'); a && !a.classList.contains('page'); a = a.parentNode) {
-        for (var n = a.nextElementSibling; n; n = n.nextElementSibling) list.push(n);
+        for (var n = a.nextElementSibling; n; n = n.nextElementSibling) {
+          if (n.getAttribute('aria-hidden') !== 'true') list.push(n);
+        }
       }
     });
     return list.filter(function (el, i) { return list.indexOf(el) === i; });
@@ -229,7 +232,9 @@
 
   // A click anywhere that isn't a book puts the open book back
   document.addEventListener('click', function (e) {
-    if (current && !morph && !(e.target.closest && e.target.closest('.hit'))) close(current);
+    if (!current || morph || !e.target.closest) return;
+    if (e.target.closest('.hit') || e.target.closest('.view-switch')) return;
+    close(current);
   });
 
   document.addEventListener('keydown', function (e) {
@@ -241,23 +246,38 @@
   });
 
   // Put an open (or closing) book back at once, with no turn, and drop any
-  // glide in progress, so a view change measures books at rest
-  // (only elements that need it are touched: a write to every book would
-  // make the browser restyle the whole shelf)
-  function closeNow() {
+  // glide in progress, so a view change measures books at rest. With keep,
+  // an open book's slot keeps its width (pinned) so no other book moves:
+  // the books fly from where they are seen. Returns a function that undoes
+  // the pin and the paused transitions, for when the shelf is out of sight.
+  // (Only elements that need it are touched: a write to every book would
+  // make the browser restyle the whole shelf.)
+  function closeNow(keep) {
+    var undo = [];
     slots.forEach(function (slot) {
       var book = slot.querySelector('.book');
       if (/\b(open|captioned|closing|to-tilt)\b/.test(slot.className)) {
+        if (keep && slot.classList.contains('open')) {
+          slot.style.width = slot.getBoundingClientRect().width + 'px';
+          undo.push(function () { slot.style.width = ''; });
+        }
+        // no hover-tilt transition from the turned pose back to the spine
+        book.style.transition = 'none';
+        undo.push(function () { book.style.transition = ''; });
         slot.classList.remove('open', 'captioned', 'closing', 'to-tilt');
         slot.querySelector('.hit').setAttribute('aria-expanded', 'false');
+      } else if (book.style.transform || book.style.transition) {
+        book.style.transition = book.style.transform = '';
       }
-      if (book.style.transform || book.style.transition) book.style.transition = book.style.transform = '';
+      if (book.style.transform) book.style.transform = '';
       if (slot.style.transform || slot.style.transition) slot.style.transition = slot.style.transform = '';
     });
-    Array.prototype.forEach.call(document.querySelectorAll('.view section, .foot'), function (el) {
+    // the views themselves too: an unfinished glide can be holding one
+    Array.prototype.forEach.call(document.querySelectorAll('.view, .view section, .foot'), function (el) {
       if (el.style.transform || el.style.transition) el.style.transition = el.style.transform = '';
     });
     current = null;
+    return function () { undo.forEach(function (f) { f(); }); };
   }
 
   // ---- Shelf / List switch ---------------------------------------------
@@ -479,12 +499,14 @@
   function morphTo(view) {
     if (morph) morph.finish();
     if (view === viewNow()) return;
-    closeNow();
     var toShelf = view === 'shelf';
     if (still.matches || !animates || entries.length !== slots.length) {
+      var reset = closeNow(false);
       setView(view);
+      reset();
       return;
     }
+    var unpin = closeNow(true);
 
     var n = slots.length, i;
     var vh = window.innerHeight;
@@ -616,6 +638,7 @@
         ghosts.forEach(function (g) { g.slot.style.opacity = g.li.style.opacity = ''; });
         secs.forEach(function (p) { p.t.el.style.borderTopColor = ''; });
         ends.forEach(function (f) { f(); });
+        unpin();   // the open book's slot (the shelf is hidden or at rest by now)
         if (morph === state) morph = null;
         deferred.splice(0).forEach(load);   // covers that came into view meanwhile
       }
