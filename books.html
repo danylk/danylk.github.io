@@ -26,6 +26,10 @@
       if (localStorage.getItem('theme') === 'light') {
         document.documentElement.setAttribute('data-theme', 'light');
       }
+      // and a saved List view (bookshelf.js has the Shelf / List switch)
+      if (localStorage.getItem('books-view') === 'list') {
+        document.documentElement.setAttribute('data-view', 'list');
+      }
     } catch (e) {}
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,9 +49,14 @@
       <a class="back" href="index.html">← Sunkwan Kim</a>
       <h1 class="page-title">Bookshelf</h1>
       <p class="statement">Books I’ve read, for academics, for class, and for fun.</p>
-      <p class="note">I add to this list as I read more, and as I remember books I read before. Click or tap a book to turn it to its cover.</p>
+      <p class="note">I add to this list as I read more, and as I remember books I read before.<span class="shelf-only"> Click or tap a book to turn it to its cover.</span></p>
+      <div class="view-switch" role="group" aria-label="Show books as" hidden>
+        <button type="button" data-view="shelf" aria-pressed="true">Shelf</button>
+        <button type="button" data-view="list" aria-pressed="false">List</button>
+      </div>
     </header>
 
+    <div class="view view-shelf">
     <section class="block shelf-block" aria-labelledby="academic">
       <h2 id="academic">Academic</h2>
       <div class="rows">
@@ -719,6 +728,95 @@
         </ul>
       </div>
     </section>
+    </div>
+    <div class="view view-list">
+    <section class="block list-block" aria-labelledby="academic-list">
+      <h2 id="academic-list">Academic <span class="count">8</span></h2>
+      <div class="rows">
+        <ol class="book-list" role="list">
+          <li><span class="bl-t">A Graduate Course in Applied Cryptography</span><span class="bl-a">Boneh, Dan, and Victor Shoup</span></li>
+          <li><span class="bl-t">Elementary Number Theory</span><span class="bl-a">Burton, David M.</span></li>
+          <li><span class="bl-t">Foundations of Cryptography, Volume I: Basic Tools</span><span class="bl-a">Goldreich, Oded</span></li>
+          <li><span class="bl-t">Foundations of Cryptography, Volume II: Basic Applications</span><span class="bl-a">Goldreich, Oded</span></li>
+          <li><span class="bl-t">Introduction to Modern Cryptography</span><span class="bl-a">Katz, Jonathan, and Yehuda Lindell</span></li>
+          <li><span class="bl-t">A Computational Introduction to Number Theory and Algebra</span><span class="bl-a">Shoup, Victor</span></li>
+          <li><span class="bl-t">Introduction to the Theory of Computation</span><span class="bl-a">Sipser, Michael</span></li>
+          <li><span class="bl-t">Proofs, Arguments, and Zero-Knowledge</span><span class="bl-a">Thaler, Justin</span></li>
+        </ol>
+      </div>
+    </section>
+    <section class="block list-block" aria-labelledby="class-list">
+      <h2 id="class-list">For class <span class="count">24</span></h2>
+      <div class="rows">
+        <ol class="book-list" role="list">
+          <li><span class="bl-t">Feed</span><span class="bl-a">Anderson, M. T.</span></li>
+          <li><span class="bl-t">Nicomachean Ethics</span><span class="bl-a">Aristotle</span></li>
+          <li><span class="bl-t">Politics</span><span class="bl-a">Aristotle</span></li>
+          <li><span class="bl-t">Oroonoko</span><span class="bl-a">Behn, Aphra</span></li>
+          <li><span class="bl-t">The Analects</span> <span class="bl-ko" lang="ko">논어</span><span class="bl-a">Confucius</span></li>
+          <li><span class="bl-t">Galore</span><span class="bl-a">Crummey, Michael</span></li>
+          <li><span class="bl-t">Man’s Search for Meaning</span><span class="bl-a">Frankl, Viktor E.</span></li>
+          <li><span class="bl-t">Lord of the Flies</span><span class="bl-a">Golding, William</span></li>
+          <li><span class="bl-t">The Outsiders</span><span class="bl-a">Hinton, S. E.</span></li>
+          <li><span class="bl-t">The Iliad</span><span class="bl-a">Homer</span></li>
+          <li><span class="bl-t">The Metamorphosis</span><span class="bl-a">Kafka, Franz</span></li>
+          <li><span class="bl-t">The Giver</span><span class="bl-a">Lowry, Lois</span></li>
+          <li><span class="bl-t">North Woods</span><span class="bl-a">Mason, Daniel</span></li>
+          <li><span class="bl-t">The Road</span><span class="bl-a">McCarthy, Cormac</span></li>
+          <li><span class="bl-t">1984</span><span class="bl-a">Orwell, George</span></li>
+          <li><span class="bl-t">The Thrilling Adventures of Lovelace and Babbage</span><span class="bl-a">Padua, Sydney</span></li>
+          <li><span class="bl-t">Five Dialogues: Euthyphro, Apology, Crito, Meno, Phaedo</span><span class="bl-a">Plato</span></li>
+          <li><span class="bl-t">The Republic</span><span class="bl-a">Plato</span></li>
+          <li><span class="bl-t">Rulers, Religion, and Riches: Why the West Got Rich and the Middle East Did Not</span><span class="bl-a">Rubin, Jared</span></li>
+          <li><span class="bl-t">Holes</span><span class="bl-a">Sachar, Louis</span></li>
+          <li><span class="bl-t">Persepolis</span><span class="bl-a">Satrapi, Marjane</span></li>
+          <li><span class="bl-t">The Old Man Who Read Love Stories</span><span class="bl-a">Sepúlveda, Luis</span></li>
+          <li><span class="bl-t">Maus</span><span class="bl-a">Spiegelman, Art</span></li>
+          <li><span class="bl-t">Religion and the Rise of Capitalism</span><span class="bl-a">Tawney, R. H.</span></li>
+        </ol>
+      </div>
+    </section>
+    <section class="block list-block" aria-labelledby="fun-list">
+      <h2 id="fun-list">For fun <span class="count">33</span></h2>
+      <div class="rows">
+        <ol class="book-list" role="list">
+          <li><span class="bl-t">Pride and Prejudice</span><span class="bl-a">Austen, Jane</span></li>
+          <li><span class="bl-t">How to Win Friends and Influence People</span><span class="bl-a">Carnegie, Dale</span></li>
+          <li><span class="bl-t">No Longer Human</span> <span class="bl-ko" lang="ko">인간 실격</span><span class="bl-a">Dazai, Osamu</span></li>
+          <li><span class="bl-t">Sophie’s World</span><span class="bl-a">Gaarder, Jostein</span></li>
+          <li><span class="bl-t">Baptism: Its Purpose, Practice and Power</span><span class="bl-a">Green, Michael</span></li>
+          <li><span class="bl-t">Sapiens: A Brief History of Humankind</span><span class="bl-a">Harari, Yuval Noah</span></li>
+          <li><span class="bl-t">Be Your Future Self Now: The Science of Intentional Transformation</span><span class="bl-a">Hardy, Benjamin</span></li>
+          <li><span class="bl-t">The Old Man and the Sea</span><span class="bl-a">Hemingway, Ernest</span></li>
+          <li><span class="bl-t">Demian</span><span class="bl-a">Hesse, Hermann</span></li>
+          <li><span class="bl-t">Les Misérables</span><span class="bl-a">Hugo, Victor</span></li>
+          <li><span class="bl-t">Thinking, Fast and Slow</span><span class="bl-a">Kahneman, Daniel</span></li>
+          <li><span class="bl-t">When Breath Becomes Air</span><span class="bl-a">Kalanithi, Paul</span></li>
+          <li><span class="bl-t">The Freedom of Self-Forgetfulness</span><span class="bl-a">Keller, Timothy</span></li>
+          <li><span class="bl-t">The Bird That Drinks Tears, Volume 1</span> <span class="bl-ko" lang="ko">눈물을 마시는 새 1</span><span class="bl-a">Lee, Yeongdo</span></li>
+          <li><span class="bl-t">The Bird That Drinks Tears, Volume 2</span> <span class="bl-ko" lang="ko">눈물을 마시는 새 2</span><span class="bl-a">Lee, Yeongdo</span></li>
+          <li><span class="bl-t">The Bird That Drinks Tears, Volume 3</span> <span class="bl-ko" lang="ko">눈물을 마시는 새 3</span><span class="bl-a">Lee, Yeongdo</span></li>
+          <li><span class="bl-t">The Bird That Drinks Tears, Volume 4</span> <span class="bl-ko" lang="ko">눈물을 마시는 새 4</span><span class="bl-a">Lee, Yeongdo</span></li>
+          <li><span class="bl-t">Mere Christianity</span><span class="bl-a">Lewis, C. S.</span></li>
+          <li><span class="bl-t">The Problem of Pain</span><span class="bl-a">Lewis, C. S.</span></li>
+          <li><span class="bl-t">The Screwtape Letters</span><span class="bl-a">Lewis, C. S.</span></li>
+          <li><span class="bl-t">Evidence That Demands a Verdict</span><span class="bl-a">McDowell, Josh</span></li>
+          <li><span class="bl-t">Animal Farm</span><span class="bl-a">Orwell, George</span></li>
+          <li><span class="bl-t">The Road Less Traveled</span><span class="bl-a">Peck, M. Scott</span></li>
+          <li><span class="bl-t">A Long Obedience in the Same Direction</span><span class="bl-a">Peterson, Eugene H.</span></li>
+          <li><span class="bl-t">Cosmos</span><span class="bl-a">Sagan, Carl</span></li>
+          <li><span class="bl-t">The Little Prince</span><span class="bl-a">Saint-Exupéry, Antoine de</span></li>
+          <li><span class="bl-t">The Code Book</span><span class="bl-a">Singh, Simon</span></li>
+          <li><span class="bl-t">The Wealth of Nations</span><span class="bl-a">Smith, Adam</span></li>
+          <li><span class="bl-t">Nudge</span><span class="bl-a">Thaler, Richard H., and Cass R. Sunstein</span></li>
+          <li><span class="bl-t">The Time Machine</span><span class="bl-a">Wells, H. G.</span></li>
+          <li><span class="bl-t">The Picture of Dorian Gray</span><span class="bl-a">Wilde, Oscar</span></li>
+          <li><span class="bl-t">Our Twisted Hero</span> <span class="bl-ko" lang="ko">우리들의 일그러진 영웅</span><span class="bl-a">Yi, Munyeol</span></li>
+          <li><span class="bl-t">Sky, Wind, Star and Poem</span> <span class="bl-ko" lang="ko">하늘과 바람과 별과 시</span><span class="bl-a">Yun, Dong-ju</span></li>
+        </ol>
+      </div>
+    </section>
+    </div>
 
     <footer class="foot">
       <p>Last updated November 2026. Covers from publishers and booksellers.</p>

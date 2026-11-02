@@ -94,7 +94,11 @@
     var list = [];
     toggled.forEach(function (slot) {
       Array.prototype.forEach.call(slot.parentNode.children, function (el) { list.push(el); });
-      for (var n = slot.closest('section').nextElementSibling; n; n = n.nextElementSibling) list.push(n);
+      // Everything after the book's section: the sections below it, then
+      // what follows the shelf view (the footer)
+      for (var a = slot.closest('section'); a && !a.classList.contains('page'); a = a.parentNode) {
+        for (var n = a.nextElementSibling; n; n = n.nextElementSibling) list.push(n);
+      }
     });
     return list.filter(function (el, i) { return list.indexOf(el) === i; });
   }
@@ -218,4 +222,32 @@
       slot.querySelector('.hit').focus();
     }
   });
+
+  // Shelf / List switch. The view is a data-view attribute on <html>
+  // (set before paint from the saved choice by the inline script in
+  // <head>), so a saved List view never flashes the shelf first.
+  var root = document.documentElement;
+  var switcher = document.querySelector('.view-switch');
+  if (switcher) {
+    var buttons = Array.prototype.slice.call(switcher.querySelectorAll('button'));
+    var show = function (view) {
+      if (view === 'list') root.setAttribute('data-view', 'list');
+      else root.removeAttribute('data-view');
+      buttons.forEach(function (b) {
+        b.setAttribute('aria-pressed', b.dataset.view === view ? 'true' : 'false');
+      });
+    };
+    buttons.forEach(function (b) {
+      b.addEventListener('click', function () {
+        var view = b.dataset.view;
+        if (view === 'list' && current) markClosed(current);
+        show(view);
+        // Titles can't be measured while the shelf is hidden
+        if (view === 'shelf') fitTitles();
+        try { localStorage.setItem('books-view', view); } catch (e) {}
+      });
+    });
+    show(root.getAttribute('data-view') === 'list' ? 'list' : 'shelf');
+    switcher.hidden = false;
+  }
 })();

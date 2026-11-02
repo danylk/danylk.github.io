@@ -1,3 +1,6 @@
 # Kept local only: not used by the page / contains private contact details
 profile.jpg
 resume.pdf
+
+# Claude Code session files (worktrees)
+.claude/

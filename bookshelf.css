@@ -531,3 +531,74 @@ html { overflow-anchor: none; }
   .cc-t { font-size: 0.72rem; }
   .cc-a { font-size: 0.62rem; }
 }
+
+/* Shelf / List views -------------------------------------------------
+   bookshelf.js sets data-view="list" on <html> (the inline script in
+   <head> does it before paint for a saved choice). Without JS the
+   switch stays hidden and the shelf shows. */
+
+.view-list { display: none; }
+:root[data-view="list"] .view-shelf { display: none; }
+:root[data-view="list"] .view-list { display: block; }
+:root[data-view="list"] .shelf-only { display: none; }
+:root[data-view="list"] .shelf-only { display: none; }
+
+.view-switch {
+  display: inline-flex;
+  margin-top: 1.25rem;
+  padding: 2px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+}
+.view-switch[hidden] { display: none; }
+
+.view-switch button {
+  padding: 0.25rem 0.95rem;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.view-switch button[aria-pressed="true"] {
+  background: var(--rule);
+  color: var(--ink);
+}
+@media (hover: hover) {
+  .view-switch button[aria-pressed="false"]:hover { color: var(--accent); }
+}
+.view-switch button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.list-block .count {
+  white-space: nowrap;
+  white-space: nowrap;
+  margin-left: 0.35rem;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.book-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  columns: 2 19rem;
+  column-gap: 2.5rem;
+}
+.book-list li {
+  padding: 0.3rem 0;
+  line-height: 1.4;
+  break-inside: avoid;
+}
+.bl-t { font-weight: 500; }
+.bl-ko { color: var(--muted); }
+.bl-a {
+  display: block;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
