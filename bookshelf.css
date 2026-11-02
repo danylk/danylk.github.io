@@ -575,14 +575,6 @@ html { overflow-anchor: none; }
   outline-offset: 2px;
 }
 
-.list-block .count {
-  white-space: nowrap;
-  white-space: nowrap;
-  margin-left: 0.35rem;
-  color: var(--muted);
-  font-weight: 400;
-}
-
 .book-list {
   margin: 0;
   padding: 0;
