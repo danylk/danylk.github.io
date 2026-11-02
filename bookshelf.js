@@ -15,13 +15,17 @@
   // Show every word of every spine title: start from the stylesheet's size
   // and shrink until the title no longer overflows its spine (text wraps
   // into extra columns across the spine as it gets smaller).
+  // scrollWidth/Height and clientWidth/Height are rounded differently, so a
+  // title that fits (e.g. one 14.35px-wide column: client 14, scroll 15)
+  // can look 1px too big; only overflow of more than 1px counts.
+  var SLACK = 1;
   var titles = Array.prototype.slice.call(document.querySelectorAll('.spine-title'));
   function fitTitles() {
     titles.forEach(function (el) {
       el.style.fontSize = '';
       var size = parseFloat(getComputedStyle(el).fontSize);
       var guard = 0;
-      while ((el.scrollWidth > el.clientWidth + 0.5 || el.scrollHeight > el.clientHeight + 0.5)
+      while ((el.scrollWidth > el.clientWidth + SLACK || el.scrollHeight > el.clientHeight + SLACK)
              && size > 5 && guard++ < 40) {
         size *= 0.94;
         el.style.fontSize = size.toFixed(2) + 'px';
