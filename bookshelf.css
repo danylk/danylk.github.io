@@ -190,6 +190,27 @@ html { overflow-anchor: none; }
 .slot.thin .spine-author,
 .mg-c.thin .spine-author { font-size: 0.56rem; }
 
+/* A photographed spine (tools/spine_image.py; the image is set on the
+   spine face by build_bookshelf.py): it fills the spine's height, centred,
+   and carries its own lettering, so the drawn title, surname and bands are
+   hidden. The title stays in the layout: the view change measures it. The
+   spine's shading (box-shadow) stays, as does --cloth on the book's top.
+   .mg-c is the view change's copy of a spine. */
+.slot.img-spine .spine-face,
+.mg-c.img-spine .spine-face {
+  background-size: auto 100%;
+  background-position: 50% 0;
+  background-repeat: no-repeat;
+}
+.slot.img-spine .spine-face::before,
+.slot.img-spine .spine-face::after,
+.mg-c.img-spine .spine-face::before,
+.mg-c.img-spine .spine-face::after { display: none; }
+.slot.img-spine .spine-title,
+.slot.img-spine .spine-author,
+.mg-c.img-spine .spine-title,
+.mg-c.img-spine .spine-author { visibility: hidden; }
+
 .spine-author {
   flex: none;
   font-size: 0.64rem;

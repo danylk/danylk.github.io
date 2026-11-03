@@ -377,6 +377,7 @@
     var t = range.getBoundingClientRect(), cs = getComputedStyle(title);
     if (!t.width || !t.height) t = b;
     return { face: f, box: b, text: t, top: f.top, bottom: f.bottom, shown: title.textContent,
+             photo: slot.classList.contains('img-spine'),
              font: { size: cs.fontSize, weight: cs.fontWeight, lh: cs.lineHeight, ls: cs.letterSpacing },
              color: cs.color };
   }
@@ -429,13 +430,15 @@
     g.style.letterSpacing = b.font.ls;
     g.style.transformOrigin = (b.text.left + b.text.width / 2 - b.box.left) + 'px ' +
                               (b.text.top + b.text.height / 2 - b.box.top) + 'px';
+    if (b.photo) g.style.visibility = 'hidden';   // the photo has its own lettering
     return g;
   }
 
   // A copy of the spine's cloth (bands and surname; the title stays hidden)
   function ghostCloth(slot, b, sx, sy) {
     var c = document.createElement('div');
-    c.className = 'mg-c' + (slot.classList.contains('thin') ? ' thin' : '');
+    c.className = 'mg-c' + (slot.classList.contains('thin') ? ' thin' : '') +
+                  (slot.classList.contains('img-spine') ? ' img-spine' : '');
     c.style.setProperty('--cloth', slot.style.getPropertyValue('--cloth'));
     c.style.setProperty('--ink-on', slot.style.getPropertyValue('--ink-on'));
     px(c, b.face.left + sx, b.face.top + sy, b.face.width, b.face.height);
