@@ -163,6 +163,20 @@ a:focus-visible {
   margin-top: 1rem;
 }
 
+/* Narrow screens: the column beside the portrait is too narrow for the
+   four links, so they get their own full-width row below it */
+@media (max-width: 29.99rem) {
+  .hero {
+    grid-template-areas:
+      "name name"
+      "text portrait"
+      "links links";
+  }
+  .hero-text { display: contents; }
+  .statement { grid-area: text; }
+  .links { grid-area: links; margin-top: -0.5rem; }
+}
+
 /* Subpage header (Bookshelf): a back link and a smaller title in the
    same light grotesque as the name on the home page */
 
@@ -268,6 +282,15 @@ a:focus-visible {
 
 /* Courses outside the theory and cryptography core are set quieter */
 .cn.dim { color: var(--muted); }
+
+/* Says what the grey means; shown with the folded list only (the
+   unfolded rows aren't dimmed) */
+.course-key {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .chevron { transition: transform 0.3s ease, color 0.15s ease; }

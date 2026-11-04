@@ -49,6 +49,7 @@
           <a href="https://github.com/danylk">GitHub</a>
           <a href="https://www.linkedin.com/in/sunkwankim/">LinkedIn</a>
           <a href="mailto:kim.sunk@northeastern.edu">Email</a>
+          <a href="books.html">Bookshelf</a>
         </nav>
       </div>
     </header>
@@ -57,7 +58,7 @@
       <h2 id="about">About</h2>
       <div class="rows">
         <div class="prose">
-          <p>I also go by Daniel. I'm finishing a bachelor's degree in Computer Science at <a href="https://www.northeastern.edu/">Northeastern University</a>, with a concentration in Foundations and a minor in Economics, and expect to graduate in December 2026. I enjoy theory in general and cryptography broadly: how schemes are defined, what it takes to prove them secure, and how the pieces build on one another.</p>
+          <p>I also go by Daniel. I’m finishing a bachelor’s degree in Computer Science at <a href="https://www.northeastern.edu/">Northeastern University</a>, with a concentration in Foundations and a minor in Economics, and expect to graduate in December 2026. I enjoy theory in general and cryptography broadly: how schemes are defined, what it takes to prove them secure, and how the pieces build on one another.</p>
           <p>Outside of cryptography, I’m interested in music, philosophy, and religion, and I keep a list of <a href="books.html">books I’ve read</a>.</p>
         </div>
       </div>
@@ -68,7 +69,7 @@
         <button class="fold" type="button" aria-expanded="false" aria-controls="course-rows">Relevant Coursework<svg class="chevron" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       </h2>
       <div class="rows courses" id="courses">
-        <p class="course-names"><span class="cn">Advanced Algorithms<span class="sep">,</span></span> <span class="cn">Programming with Probabilities<span class="sep">,</span></span> <span class="cn">Cryptography I (Stanford Online)<span class="sep">,</span></span> <span class="cn">Logic and Computation<span class="sep">,</span></span> <span class="cn">Introduction to CS Research<span class="sep">,</span></span> <span class="cn dim">Principles of AI<span class="sep">,</span></span> <span class="cn">Cryptography<span class="sep">,</span></span> <span class="cn dim">Information Retrieval<span class="sep">,</span></span> <span class="cn dim">Machine Learning and Data Mining 1<span class="sep">,</span></span> <span class="cn">Theory of Computation<span class="sep">,</span></span> <span class="cn dim">Computer Systems<span class="sep">,</span></span> <span class="cn">Algorithms and Data<span class="sep">,</span></span> <span class="cn">Mathematics of Data Models<span class="sep">,</span></span> <span class="cn dim">Foundations of Cybersecurity</span></p>
+        <p class="course-names"><span class="cn">Advanced Algorithms<span class="sep">,</span></span> <span class="cn">Programming with Probabilities<span class="sep">,</span></span> <span class="cn">Cryptography I (Stanford Online)<span class="sep">,</span></span> <span class="cn">Logic and Computation<span class="sep">,</span></span> <span class="cn">Introduction to CS Research<span class="sep">,</span></span> <span class="cn dim">Principles of AI<span class="sep">,</span></span> <span class="cn">Cryptography<span class="sep">,</span></span> <span class="cn dim">Information Retrieval<span class="sep">,</span></span> <span class="cn dim">Machine Learning and Data Mining 1<span class="sep">,</span></span> <span class="cn">Theory of Computation<span class="sep">,</span></span> <span class="cn dim">Computer Systems<span class="sep">,</span></span> <span class="cn">Algorithms and Data<span class="sep">,</span></span> <span class="cn">Mathematics of Data Models<span class="sep">,</span></span> <span class="cn dim">Foundations of Cybersecurity</span><span class="course-key">Less related courses in grey.</span></p>
         <div class="course-rows" id="course-rows" hidden>
           <div class="row course">
             <p class="year">2026</p>
@@ -274,7 +275,7 @@
       var names = Array.prototype.slice.call(list.querySelectorAll('.cn'));
       var titles = Array.prototype.slice.call(rows.querySelectorAll('h3'));
       var extras = Array.prototype.slice.call(rows.querySelectorAll('.year, .meta'));
-      var seps = Array.prototype.slice.call(list.querySelectorAll('.sep'));
+      var seps = Array.prototype.slice.call(list.querySelectorAll('.sep, .course-key'));
       var ease = 'cubic-bezier(0.2, 0.7, 0.2, 1)';
       var duration = 480;
 

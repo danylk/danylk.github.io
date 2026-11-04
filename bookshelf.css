@@ -572,9 +572,10 @@ html { overflow-anchor: none; }
   height: 0;
   overflow: hidden;
 }
-/* The shelf hint keeps its space in List view, so the header (and the
-   switch in it) doesn't move when the view changes */
-:root[data-view="list"] .shelf-only { visibility: hidden; opacity: 0; }
+/* The shelf hint sits below the switch and is removed in List view, so
+   it leaves no gap and the switch above it doesn't move */
+.subhead .shelf-hint { margin-top: 0.9rem; }
+:root[data-view="list"] .shelf-only { display: none; }
 
 /* The switch: a pill (.vs-pill) slides behind the pressed button,
    stretching across both on the way (bookshelf.js places and animates
